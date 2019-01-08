@@ -1,0 +1,59 @@
+server:
+  port: 5502
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    max-connections: 5000
+spring:
+  application:
+    name: map-configcenter
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+        enabled: true
+        service-name: map-configcenter
+        ip-address: 127.0.0.1
+        prefer-ip-address: true
+        heartbeat:
+          enabled: true
+    config:
+      server:
+        git:
+          uri: http://10.250.0.67/root/ec-config.git
+          username: local
+          password: locallocal
+          # 指定搜索路径，如果有多个路径则使用,分隔
+          #search-paths: ec-config
+          #配置中心通过git从远程git库，有时本地的拷贝被污染，这时配置中心无法从远程库更新本地配置,设置force-pull=true，则强制从远程库中更新本地库
+          force-pull: true
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+  rabbitmq:
+    virtual-host: /
+    host: 127.0.0.1
+    port: 15672
+    username: guest
+    password: guest
+encrypt:
+  key: sfsvpajugg
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,refresh,bus-refresh,consul,service-registry,hystrix.stream
+  server:
+    servlet:
+      context-path: /
+    ssl:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+
