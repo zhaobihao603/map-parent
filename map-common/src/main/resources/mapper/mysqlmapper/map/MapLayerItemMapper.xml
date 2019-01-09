@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.map.MapLayerItemMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapLayerItem">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="geoType" jdbcType="VARCHAR" property="geoType" />
+    <result column="xs" jdbcType="LONGVARCHAR" property="xs" />
+    <result column="ys" jdbcType="LONGVARCHAR" property="ys" />
+    <result column="bgcolor" jdbcType="VARCHAR" property="bgcolor" />
+    <result column="color" jdbcType="VARCHAR" property="color" />
+    <result column="lineweight" jdbcType="VARCHAR" property="lineweight" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="imageId" jdbcType="CHAR" property="imageId" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="params" jdbcType="VARCHAR" property="params" />
+    <result column="params1" jdbcType="VARCHAR" property="params1" />
+    <result column="params2" jdbcType="VARCHAR" property="params2" />
+    <result column="params3" jdbcType="VARCHAR" property="params3" />
+    <result column="params4" jdbcType="VARCHAR" property="params4" />
+    <!--<result column="area" jdbcType="INTEGER" property="area" />
+    <result column="layerId" jdbcType="CHAR" property="layerId" /> -->
+    <association column="areaId" property="area" javaType="com.imap.cloud.common.entity.map.MapLayer">
+		<id column="area_id" property="id" jdbcType="CHAR"/>
+		<result column="area_ename" property="ename" jdbcType="VARCHAR"/>
+		<result column="area_alias" property="alias" jdbcType="VARCHAR"/>
+		<result column="area_name" property="name" jdbcType="VARCHAR"/>
+	</association>
+    <association column="layerId" property="layer" javaType="com.imap.cloud.common.entity.map.MapLayer">
+		<id column="layer_id" property="id" jdbcType="CHAR"/>
+		<result column="layer_name" property="name" jdbcType="VARCHAR"/>
+		<result column="layer_source" property="source" jdbcType="VARCHAR"/>
+		<result column="layer_layerType" property="layerType" jdbcType="VARCHAR"/>
+	</association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    item.id id,
+    item.name name, 
+    item.address address, 
+    item.alias alias, 
+    item.tags tags, 
+    item.x x, 
+    item.y y,
+    item.geoType geoType, 
+    item.bgcolor bgcolor, 
+    item.color color, 
+    item.lineweight lineweight, 
+    item.keywords keywords, 
+    item.areaId areaId, 
+    item.layerId layerId, 
+    item.imageId imageId, 
+    item.deleted deleted, 
+    item.params params, 
+    item.params1 params1, 
+    item.params2 params2, 
+    item.params3 params3, 
+    item.params4 params4,
+    item.description description, 
+    item.xs xs, 
+    item.ys ys,
+    area.id area_id,
+	area.ename area_ename,
+	area.alias area_alias,
+	area.name area_name,
+    layer.id layer_id,
+    layer.name layer_name,
+    layer.source layer_source,
+    layer.layerType layer_layerType
+  </sql>
+  <select id="selectByPk" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from map_layer_item item 
+    left join map_layer layer on item.layerId=layer.id
+    left join map_layer area on item.areaId=area.id
+    where item.id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="listByRange" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />   
+    from map_layer_item item 
+    left join map_layer layer on item.layerId=layer.id
+    left join map_layer area on item.areaId=area.id
+    where item.deleted=false
+    <if test="name!=null">
+		and item.name like CONCAT('%',#{name},'%')
+	</if>
+    <if test="area!=null">
+    	and item.areaId = #{area.id,jdbcType=CHAR}
+    </if>
+    <if test="layer != null">
+		and item.layerId = #{layer.id,jdbcType=CHAR}
+    </if>
+    <if test="startX != null">
+		and item.x &gt;= #{startX}
+    </if>
+    <if test="endX != null">
+		and item.x &lt;= #{endX}
+    </if>
+    <if test="startY != null">
+		and item.y &gt;= #{startY}
+    </if>
+    <if test="endY != null">
+		and item.y &lt;= #{endY}
+    </if>
+  </select>
+  <select id="listByArea" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />   
+    from map_layer_item item 
+    left join map_layer layer on item.layerId=layer.id
+    left join map_layer area on item.areaId=area.id
+    where item.deleted=false
+    <if test="name!=null">
+		and item.name like CONCAT('%',#{name},'%')
+	</if>
+    <if test="areaId!=null">
+    	and item.areaId = #{areaId,jdbcType=CHAR}
+    </if>
+    <if test="layer != null">
+		and item.layerId = #{layer.id,jdbcType=CHAR}
+    </if>
+  </select>
+  <select id="selectAll" parameterType="com.imap.cloud.common.entity.map.MapLayerItem" resultMap="BaseResultMap">
+       select 
+       <include refid="Base_Column_List" />
+        from map_layer_item item 
+	    left join map_layer layer on item.layerId=layer.id
+	    left join map_layer area on item.areaId=area.id
+	    where 1=1
+		<if test="name != null">
+	      and item.name like CONCAT('%',#{name},'%')
+		</if>
+		<if test="address != null">
+       		and item.address = #{address,jdbcType=VARCHAR}
+	      </if>
+	      <if test="alias != null">
+	        and item.alias = #{alias,jdbcType=VARCHAR}
+	      </if>
+	      <if test="tags != null">
+	        and item.tags = #{tags,jdbcType=VARCHAR}
+	      </if>
+	      <if test="x != null">
+	        and item.x = #{x,jdbcType=DOUBLE}
+	      </if>
+	      <if test="y != null">
+	        and item.y = #{y,jdbcType=DOUBLE}
+	      </if>
+	      <if test="geoType != null">
+	        and item.geoType = #{geoType,jdbcType=VARCHAR}
+	      </if>
+	      <if test="xs != null">
+	        and item.xs = #{xs,jdbcType=LONGVARCHAR}
+	      </if>
+	      <if test="ys != null">
+	        and item.ys = #{ys,jdbcType=LONGVARCHAR}
+	      </if>
+	      <if test="bgcolor != null">
+	        and item.bgcolor = #{bgcolor,jdbcType=VARCHAR}
+	      </if>
+	      <if test="color != null">
+	        and item.color = #{color,jdbcType=VARCHAR}
+	      </if>
+	      <if test="lineweight != null">
+	        and item.lineweight = #{lineweight,jdbcType=VARCHAR}
+	      </if>
+	      <if test="keywords != null">
+	        and item.keywords = #{keywords,jdbcType=VARCHAR}
+	      </if>
+	      <if test="area != null">
+	        and item.areaId = #{area.id,jdbcType=CHAR}
+	      </if>
+	      <if test="layer != null">
+	        and item.layerId = #{layer.id,jdbcType=CHAR}
+	      </if>
+	      <if test="imageId != null">
+	        and item.imageId = #{imageId,jdbcType=CHAR}
+	      </if>
+	      <if test="deleted != null">
+	        and deleted = #{deleted,jdbcType=BIT}
+	      </if>
+	</select>
+	<select id="count" parameterType="com.imap.cloud.common.entity.map.MapLayerItem" resultType="int">
+		select 
+        count(*)
+        from map_layer_item where 1=1 
+			<if test="name != null">
+		      and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="address != null">
+        		and address = #{address,jdbcType=VARCHAR}
+		    </if>
+		    <if test="keywords != null">
+		        and keywords = #{keywords,jdbcType=VARCHAR}
+		      </if>
+		      <if test="area != null">
+		        and areaId = #{area.id,jdbcType=CHAR}
+		      </if>
+		      <if test="geoType != null">
+		        and geoType = #{geoType,jdbcType=VARCHAR}
+		      </if>
+		      <if test="layer != null">
+		        and layerId = #{layer.id,jdbcType=CHAR}
+		      </if>
+		    <if test="imageId != null">
+		        and imageId = #{imageId,jdbcType=CHAR}
+		      </if>
+		      <if test="deleted != null">
+		        and deleted = #{deleted,jdbcType=BIT}
+		      </if>
+	</select>	
+	<select id="listByLayerId" parameterType="com.imap.cloud.common.entity.map.MapLayerItem" resultMap="BaseResultMap">
+		select 
+	       <include refid="Base_Column_List" />
+	       from map_layer_item item 
+		   left join map_layer layer on item.layerId=layer.id
+		   left join map_layer area on item.areaId=area.id 
+		   where item.layerId = #{layer.id,jdbcType=CHAR} and deleted=false
+	</select>
+  
+  <delete id="deleteByPk" parameterType="java.lang.String">
+    delete from map_layer_item
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapLayerItem">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+			select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+    insert into map_layer_item (id, name, address, 
+      alias, tags, x, y, geoType,
+      bgcolor, color, lineweight, 
+      keywords, areaId, layerId, 
+      imageId, deleted, params, 
+      params1, params2, params3, 
+      params4, description, xs, 
+      ys)
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{alias,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, 
+      #{geoType,jdbcType=VARCHAR}, 
+      #{bgcolor,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{lineweight,jdbcType=VARCHAR}, 
+      #{keywords,jdbcType=VARCHAR}, #{area.id,jdbcType=CHAR}, #{layer.id,jdbcType=CHAR}, 
+      #{imageId,jdbcType=CHAR}, #{deleted,jdbcType=BIT}, #{params,jdbcType=VARCHAR}, 
+      #{params1,jdbcType=VARCHAR}, #{params2,jdbcType=VARCHAR}, #{params3,jdbcType=VARCHAR}, 
+      #{params4,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{xs,jdbcType=LONGVARCHAR}, 
+      #{ys,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.map.MapLayerItem">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+			select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+    insert into map_layer_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="alias != null">
+        alias,
+      </if>
+      <if test="tags != null">
+        tags,
+      </if>
+      <if test="x != null">
+        x,
+      </if>
+      <if test="y != null">
+        y,
+      </if>
+      <if test="geoType != null">
+        geoType,
+      </if>
+      <if test="bgcolor != null">
+        bgcolor,
+      </if>
+      <if test="color != null">
+        color,
+      </if>
+      <if test="lineweight != null">
+        lineweight,
+      </if>
+      <if test="keywords != null">
+        keywords,
+      </if>
+      <if test="area != null">
+        areaId,
+      </if>
+      <if test="layer != null">
+        layerId,
+      </if>
+      <if test="imageId != null">
+        imageId,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="params != null">
+        params,
+      </if>
+      <if test="params1 != null">
+        params1,
+      </if>
+      <if test="params2 != null">
+        params2,
+      </if>
+      <if test="params3 != null">
+        params3,
+      </if>
+      <if test="params4 != null">
+        params4,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="xs != null">
+        xs,
+      </if>
+      <if test="ys != null">
+        ys,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null">
+        #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="geoType != null">
+        #{geoType,jdbcType=VARCHAR},
+      </if>
+      <if test="bgcolor != null">
+        #{bgcolor,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null">
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="lineweight != null">
+        #{lineweight,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area.id,jdbcType=CHAR},
+      </if>
+      <if test="layer != null">
+        #{layer.id,jdbcType=CHAR},
+      </if>
+      <if test="imageId != null">
+        #{imageId,jdbcType=CHAR},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="params != null">
+        #{params,jdbcType=VARCHAR},
+      </if>
+      <if test="params1 != null">
+        #{params1,jdbcType=VARCHAR},
+      </if>
+      <if test="params2 != null">
+        #{params2,jdbcType=VARCHAR},
+      </if>
+      <if test="params3 != null">
+        #{params3,jdbcType=VARCHAR},
+      </if>
+      <if test="params4 != null">
+        #{params4,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="xs != null">
+        #{xs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ys != null">
+        #{ys,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPkSelective" parameterType="com.imap.cloud.common.entity.map.MapLayerItem">
+    update map_layer_item
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        tags = #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="geoType != null">
+        geoType = #{geoType,jdbcType=VARCHAR},
+      </if>
+      <if test="bgcolor != null">
+        bgcolor = #{bgcolor,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null">
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="lineweight != null">
+        lineweight = #{lineweight,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        keywords = #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        areaId = #{area.id,jdbcType=CHAR},
+      </if>
+      <if test="layer != null">
+        layerId = #{layer.id,jdbcType=CHAR},
+      </if>
+      <if test="imageId != null">
+        imageId = #{imageId,jdbcType=CHAR},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="params != null">
+        params = #{params,jdbcType=VARCHAR},
+      </if>
+      <if test="params1 != null">
+        params1 = #{params1,jdbcType=VARCHAR},
+      </if>
+      <if test="params2 != null">
+        params2 = #{params2,jdbcType=VARCHAR},
+      </if>
+      <if test="params3 != null">
+        params3 = #{params3,jdbcType=VARCHAR},
+      </if>
+      <if test="params4 != null">
+        params4 = #{params4,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="xs != null">
+        xs = #{xs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ys != null">
+        ys = #{ys,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPk" parameterType="com.imap.cloud.common.entity.map.MapLayerItem">
+    update map_layer_item
+    set name = #{name,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      tags = #{tags,jdbcType=VARCHAR},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      geoType = #{geoType,jdbcType=VARCHAR}
+      xs = #{xs,jdbcType=LONGVARCHAR},
+      ys = #{ys,jdbcType=LONGVARCHAR}
+      bgcolor = #{bgcolor,jdbcType=VARCHAR},
+      color = #{color,jdbcType=VARCHAR},
+      lineweight = #{lineweight,jdbcType=VARCHAR},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR},
+      areaId = #{area.id,jdbcType=CHAR},
+      layerId = #{layer.id,jdbcType=CHAR},
+      imageId = #{imageId,jdbcType=CHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      params = #{params,jdbcType=VARCHAR},
+      params1 = #{params1,jdbcType=VARCHAR},
+      params2 = #{params2,jdbcType=VARCHAR},
+      params3 = #{params3,jdbcType=VARCHAR},
+      params4 = #{params4,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>  
+</mapper>

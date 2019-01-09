@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.mapLushu.MapLushuMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.mapLushu.MapLushu">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="startTime" jdbcType="VARCHAR" property="startTime" />
+    <result column="endPoint" jdbcType="VARCHAR" property="endPoint" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="seq" jdbcType="INTEGER" property="seq" />
+    <result column="endTime" jdbcType="VARCHAR" property="endTime" />
+    <result column="time" jdbcType="VARCHAR" property="time" />
+    <result column="lushuid" jdbcType="CHAR" property="lushuid" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, startTime, endPoint, name,  x, y, seq, endTime, time,lushuid,path
+  </sql>
+  
+  <select id="getBy" parameterType="com.imap.cloud.common.entity.mapLushu.MapLushu" resultMap="BaseResultMap">
+  	select
+  	<include refid="Base_Column_List" />
+  	from map_lushu where 1=1 
+  	<if test="startTime!=null">
+	    	and startTime=#{startTime}
+	   </if>
+	   <if test="endPoint!=null">
+	    	and endPoint=#{endPoint}
+	   </if>
+	   <if test="name!=null">
+	    	and name=#{name}
+	   </if>
+	   <if test="endTime!=null">
+	    	and endTime=#{endTime}
+	   </if>
+	   <if test="time!=null">
+	    	and time=#{time}
+	   </if>
+	   <if test="lushuid!=null">
+	    	and lushuid=#{lushuid}
+	   </if>
+  	order by lushuid,time,seq
+  </select>
+  
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.mapLushu.MapLushu">
+    <selectKey keyProperty="id" resultType="String" order="BEFORE">  
+		select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+    insert into map_lushu (id,startTime, endPoint, 
+      name,x, y, seq, 
+      endTime, time, lushuid,path
+      )
+    values (#{id,jdbcType=CHAR},#{startTime,jdbcType=VARCHAR}, #{endPoint,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR},#{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{seq,jdbcType=INTEGER}, 
+      #{endTime,jdbcType=VARCHAR}, #{time,jdbcType=VARCHAR}, #{lushuid,jdbcType=VARCHAR},#{path,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+   <delete id="deleteBylushuIdAndTime" parameterType="com.imap.cloud.common.entity.mapLushu.MapLushu">
+    delete from map_lushu
+    where lushuid = #{lushuid,jdbcType=CHAR} and time = #{time,jdbcType=VARCHAR}
+   </delete>
+  
+  	<!-- 根据主键id查询单位类型 -->
+	<select id="selectByid" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select 
+		<include refid="Base_Column_List"/>
+		from map_lushu 
+		where id=#{id,jdbcType=CHAR} 
+	</select>
+</mapper>

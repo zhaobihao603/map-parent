@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.map.MapDirMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapDir">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="seq" jdbcType="INTEGER" property="seq" />
+    <result column="enabled" jdbcType="CHAR" property="enabled" />
+     <!-- <result column="parent_id" jdbcType="INTEGER" property="parentId" /> -->
+    <!-- 查询父模块 -->  
+    <association property="parent" column="parent_id"  select="selectByPk" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, seq, enabled, parent_id
+  </sql>
+  <select id="selectByPk" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from map_dir
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="listByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from map_dir
+    where 1=1 
+      <if test="enabled != null">
+       and enabled = #{enabled,jdbcType=CHAR},
+      </if>
+      <if test="parentId == null">
+       and parent_id is null
+      </if>
+      <if test="parentId != null">
+       and parent_id = #{parentId,jdbcType=CHAR} 
+      </if>
+      order by seq asc
+  </select>
+  <select id="countByParentId" parameterType="java.lang.String" resultType="int">
+    select 
+    count(id)
+    from map_dir
+    where enabled='1' and
+      <if test="parentId == null">
+        parent_id is null
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=CHAR} 
+      </if>
+  </select>
+  <delete id="deleteByPk" parameterType="java.lang.String">
+    delete from map_dir
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <!-- 数据库主键自增长，这里主键返回 -->
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapDir">
+    <selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_dir (id, name, seq, 
+      enabled <if test="parent != null">,parent_id</if>)
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER}, 
+      #{enabled,jdbcType=CHAR}<if test="parent != null">,#{parent.id,jdbcType=CHAR}</if>)
+  </insert>
+  <!-- 数据库主键自增长，这里主键返回 -->
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.map.MapDir">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_dir
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="seq != null">
+        seq,
+      </if>
+      <if test="enabled != null">
+        enabled,
+      </if>
+      <if test="parent != null">
+        parent_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null">
+        #{seq,jdbcType=INTEGER},
+      </if>
+      <if test="enabled != null">
+        #{enabled,jdbcType=CHAR},
+      </if>
+      <if test="parent != null">
+        #{parent.id,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPkSelective" parameterType="com.imap.cloud.common.entity.map.MapDir">
+    update map_dir
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null">
+        seq = #{seq,jdbcType=INTEGER},
+      </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=CHAR},
+      </if>
+      <if test="parent != null">
+        parent_id = #{parent.id,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPk" parameterType="com.imap.cloud.common.entity.map.MapDir">
+    update map_dir
+    set name = #{name,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=INTEGER},
+      enabled = #{enabled,jdbcType=CHAR},
+      <if test="parent != null">
+        parent_id = #{parent.id,jdbcType=CHAR}
+      </if>
+      <if test="parent == null">
+        parent_id = null
+      </if>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+	<select id="selectAll" parameterType="com.imap.cloud.common.entity.map.MapDir" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from map_dir where 1=1 
+			<if test="name != null">
+		      and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="seq != null">
+		      and seq = #{seq,jdbcType=INTEGER}
+			</if>
+			<if test="enabled != null">
+		      and enabled = #{enabled,jdbcType=CHAR}
+		    </if>
+		    <if test="parent != null">
+		      and parent_id = #{parent.id,jdbcType=CHAR}
+		    </if>
+		 order by seq asc
+	</select>
+	
+	<select id="count" parameterType="com.imap.cloud.common.entity.map.MapDir" resultType="int">
+		select 
+        count(*)
+        from map_dir where 1=1 
+			<if test="name != null">
+		      and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="seq != null">
+		      and seq = #{seq,jdbcType=INTEGER}
+			</if>
+			<if test="enabled != null">
+		      and enabled = #{enabled,jdbcType=CHAR}
+		    </if>
+		    <if test="parent != null">
+		      and parent_id = #{parent.id,jdbcType=CHAR}
+		    </if>
+	</select>
+</mapper>

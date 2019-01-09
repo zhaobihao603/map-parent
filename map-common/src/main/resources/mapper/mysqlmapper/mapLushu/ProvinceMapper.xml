@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.mapLushu.ProvinceMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.mapLushu.Province">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fid" jdbcType="INTEGER" property="fid" />
+    <result column="SHAPE" jdbcType="VARCHAR" property="SHAPE" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="sname" jdbcType="VARCHAR" property="sname" />
+    <result column="enAddress" jdbcType="VARCHAR" property="enAddress" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="houseNum" jdbcType="VARCHAR" property="houseNum" />
+    <result column="buildNum" jdbcType="VARCHAR" property="buildNum" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="picNum" jdbcType="VARCHAR" property="picNum" />
+    <result column="entityType" jdbcType="VARCHAR" property="entityType" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id,fid, SHAPE, name,ename,alias,sname,enAddress,address, houseNum, buildNum, remark, picNum,entityType
+  </sql>
+  
+  <!-- 导入shpfile文件数据 -->
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.mapLushu.Province">
+    insert into hotmap (id,fid,SHAPE, name, alias, ename, 
+      sname,address,enAddress, houseNum, buildNum, 
+      remark, picNum, entityType
+      )
+    values (#{id,jdbcType=INTEGER},
+    <choose>
+            <when test="fid != null and fid!=''">  
+                #{fid,jdbcType=INTEGER}, 
+            </when>  
+            <otherwise>  
+                #{id,jdbcType=INTEGER},
+            </otherwise>
+    </choose> GEOMFROMTEXT('${SHAPE}'), #{name,jdbcType=VARCHAR},#{alias,jdbcType=VARCHAR},#{ename,jdbcType=VARCHAR},
+      #{sname,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{enAddress,jdbcType=VARCHAR}, #{houseNum,jdbcType=VARCHAR}, #{buildNum,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{picNum,jdbcType=VARCHAR}, #{entityType,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <!-- 添加要素数据 -->
+  <insert id="insertFeature" parameterType="com.imap.cloud.common.entity.mapLushu.Province">
+  	<selectKey keyProperty="fid" resultType="Integer" order="BEFORE">  
+		select MAX(id)+1  from hotmap
+	</selectKey>
+	insert into hotmap (id,fid,SHAPE, name, alias, ename, 
+      sname,address,enAddress, houseNum, buildNum, 
+      remark, picNum, entityType
+      )
+    values (#{id,jdbcType=INTEGER},
+    <choose>
+            <when test="fid != null and fid!=''">  
+                #{fid,jdbcType=INTEGER}, 
+            </when>  
+            <otherwise>  
+                #{id,jdbcType=INTEGER},
+            </otherwise>
+    </choose>GEOMFROMTEXT('${SHAPE}'), #{name,jdbcType=VARCHAR},#{alias,jdbcType=VARCHAR}, #{ename,jdbcType=VARCHAR},
+      #{sname,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{enAddress,jdbcType=VARCHAR},#{houseNum,jdbcType=VARCHAR}, #{buildNum,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{picNum,jdbcType=VARCHAR}, #{entityType,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <!-- 修改要素 -->
+  <update id="updateFeature" parameterType="com.imap.cloud.common.entity.mapLushu.Province">
+  update hotmap
+  <set>
+  	<if test="fid != null">
+  	fid = #{fid,jdbcType=INTEGER},
+  	</if>
+  	<if test="name != null">
+  	name = #{name,jdbcType=VARCHAR},
+  	</if>
+  	<if test="alias != null">
+  	alias = #{alias,jdbcType=VARCHAR},
+  	</if>
+  	<if test="ename != null">
+  	ename = #{ename,jdbcType=VARCHAR},
+  	</if>
+  	<if test="SHAPE != null">
+  	SHAPE = GEOMFROMTEXT('${SHAPE}'),
+  	</if>
+  	<if test="sname != null">
+  	sname = #{sname,jdbcType=VARCHAR},
+  	</if>
+  	<if test="address != null">
+  	address = #{address,jdbcType=VARCHAR},
+  	</if>
+  	<if test="enAddress != null">
+  	enAddress = #{enAddress,jdbcType=VARCHAR},
+  	</if>
+  	<if test="houseNum != null">
+  	houseNum = #{houseNum,jdbcType=VARCHAR},
+  	</if>
+  	<if test="buildNum != null">
+  	buildNum = #{buildNum,jdbcType=VARCHAR},
+  	</if>
+  	<if test="remark != null">
+  	remark = #{remark,jdbcType=VARCHAR},
+  	</if>
+  	<if test="picNum != null">
+  	picNum = #{picNum,jdbcType=VARCHAR},
+  	</if>
+  	<if test="entityType != null">
+  	entityType = #{entityType,jdbcType=VARCHAR},
+  	</if>
+  </set>
+   where fid = #{fid,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 删除要素 -->
+  <delete id="deleteFeature" parameterType="Integer">
+  delete from hotmap where fid=#{fid,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 清空表数据 -->
+  <delete id="deleteTb" >
+  delete from hotmap 
+  </delete>
+</mapper>

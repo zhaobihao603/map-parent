@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.newborn.NewstuguidesiteMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="route_id" jdbcType="CHAR" property="route_id" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+    <result column="detail" jdbcType="LONGVARCHAR" property="detail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, priority, x, y, route_id
+  </sql>
+  <sql id="Blob_Column_List">
+    detail
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from map_newstuguide_site
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from map_newstuguide_site
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+  <select id="selectAll"  resultMap="BaseResultMap" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+  	select * from map_newstuguide_site r
+  	where 1=1
+  	<if test ="name!=null">
+		and r.name like CONCAT('%',#{name},'%')
+   </if> 
+  </select>
+  
+  <insert id="inserts" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_newstuguide_site (id, name, priority, 
+      x, y, route_id, detail
+      )
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, 
+      #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{route_id,jdbcType=CHAR}, #{detail,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <!--  查询相关节点信息 -->
+  <select id="selectlist"  parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select * from map_newstuguide_site where route_id=#{id,jdbcType=CHAR}
+  
+  </select>
+  
+  <!-- 删除外键关联 -->
+  <delete id="deleteByroute"  parameterType="java.lang.String">
+   delete from map_newstuguide_site where route_id=#{id,jdbcType=CHAR}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_newstuguide_site
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="priority != null">
+        priority,
+      </if>
+      <if test="x != null">
+        x,
+      </if>
+      <if test="y != null">
+        y,
+      </if>
+      <if test="route_id != null">
+        route_id,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null">
+        #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="x != null">
+        #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="route_id != null">
+        #{route_id,jdbcType=CHAR},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+    update map_newstuguide_site
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null">
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="route_id != null">
+        route_id = #{route_id,jdbcType=CHAR},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+    update map_newstuguide_site
+    set name = #{name,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      route_id = #{route_id,jdbcType=CHAR},
+      detail = #{detail,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.imap.cloud.common.entity.newborn.Newstuguidesite">
+    update map_newstuguide_site
+    set name = #{name,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      route_id = #{route_id,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

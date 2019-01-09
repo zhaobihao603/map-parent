@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.security.UrlMapper">
+
+  <resultMap type="Url" id="baseResultMap">
+	<id column="u_id" property="id" jdbcType="CHAR" />
+  	<result column="address" property="address" jdbcType="VARCHAR" />
+  	<result column="url_name" property="urlname" jdbcType="VARCHAR" />
+  	<result column="ename" property="ename" jdbcType="VARCHAR" />
+  	<result column="dispaly" property="dispaly" jdbcType="CHAR" />
+  	<result column="template" property="template" jdbcType="VARCHAR" />
+  	<result column="orderValue" property="orderValue" jdbcType="INTEGER" />
+  	<result column="className" property="className" jdbcType="VARCHAR" />
+  	<result column="parentId" property="parentId" jdbcType="CHAR" />
+  	<result column="code" property="code" jdbcType="VARCHAR" />
+  	<!-- URL资源对应权限
+  	<association property="permission" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap"></association>
+ 	 -->
+ 	 
+  </resultMap>
+  <resultMap type="Url" id="urlResultMap" extends="baseResultMap">
+  	<collection property="permissionSet" ofType="Permission" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap"></collection>
+  </resultMap>
+  
+  <!-- 查询URL对应的权限和角色的关系，不查询父节点，只查询子节点 ,也只查询后台的子节点-->
+  <select id="findAllTwoRole" resultMap="urlResultMap">
+  	<!--  select * from sec_url u 
+  	 join sec_permission p on u.pid = p.p_id 
+  	 join sec_permission_role pr on p.p_id = pr.pid 
+  	 join sec_role r on pr.rid = r.r_id 
+  	 where u.parentId is not null and r.deleted = 0 and r.isEnabled = 0 -->
+  	 <![CDATA[
+  	 select * from sec_url u 
+	 join sec_permission_url up on u.u_id = up.uid
+	 join sec_permission p on up.pid = p.p_id 
+	 join sec_permission_role pr on p.p_id = pr.pid 
+	 join sec_role r on pr.rid = r.r_id 
+	 where (u.parentId is not null or u.parentId <> '') and r.deleted = 0 and r.isEnabled = 0 and p.deleted = 0
+	 and (u.code is null or u.code = '') 
+	 ]]>
+  </select>
+  
+   <!-- 查询URL对应的权限和用户的关系，不查询父节点，只查询后台子节点,并该用户可以正常使用 -->
+  <select id="findAllTwoUser" resultMap="urlResultMap" >
+     <!-- select u.*,p.*,us.a_id,us.name,us.login from sec_url u 
+	 join sec_permission p on u.pid = p.p_id 
+	 join sec_permission_user pu on p.p_id = pu.pid 
+	 join sec_user us on pu.uid = us.a_id 
+	 where u.parentId is not null and us.deleted = 0 and us.isAccountNonExpired = 0
+	 and us.isAccountNonLocked = 0 and us.isCredentialsNonExpired = 0
+	 AND us.isEnabled = 0 -->
+	<![CDATA[
+	select u.*,p.*,us.a_id,us.name,us.login from 
+	sec_url u 
+  	join sec_permission_url up on u.u_id = up.uid
+	join sec_permission p on up.pid = p.p_id 
+	join sec_permission_user pu on p.p_id = pu.pid 
+	join sec_user us on pu.uid = us.a_id 
+	where (u.parentId is not null or u.parentId <> '') and us.deleted = 0 and us.isAccountNonExpired = 0
+	and us.isAccountNonLocked = 0 and us.isCredentialsNonExpired = 0 AND us.isEnabled = 0
+	and (u.code is null or u.code = '') and p.deleted = 0 
+	]]>
+  </select>
+  
+   <select id="selectAll" parameterType="Url" resultMap="baseResultMap">
+   select * from sec_url where parentId is not null
+        <if test="urlname != null and urlname != ''"> 
+            and url_name like CONCAT('%',#{urlname},'%' )
+        </if>
+        <if test="parentId !=null and parentId != ''" > 
+             and parentId=#{parentId,jdbcType=CHAR}
+        </if>
+        ORDER BY orderValue asc
+   <!-- <choose>
+		<when test="urlname == null or urlname == ''">select * from sec_url where parentId is not null ORDER BY orderValue asc</when>
+		<otherwise>
+		  	select * from sec_url where parentId is not null
+		  	<if test="urlname != null and urlname != ''">
+		  		and url_name like CONCAT('%',#{urlname},'%' ) 
+		  	</if>
+		  	ORDER BY orderValue asc
+		</otherwise>
+	</choose> -->
+  </select>
+  
+  <select id="selectPageFather" parameterType="Url" resultType="java.util.LinkedHashMap">
+   <choose>
+		<when test="urlname == null or urlname == ''">select * from sec_url where (parentId = '' or parentId is null ) ORDER BY orderValue asc</when>
+		<otherwise>
+		  	select * from sec_url where (parentId = ''  or parentId is null )
+		  	<if test="urlname != null and urlname != ''">
+		  		and url_name like CONCAT('%',#{urlname},'%' ) 
+		  	</if>
+			ORDER BY orderValue asc
+		</otherwise>
+	</choose>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="urlResultMap">
+  	select * from sec_url where u_id = #{id}
+  </select>
+  
+  <select id="selectUrlAndParentByPk" parameterType="String" resultType="java.util.LinkedHashMap">
+   select u1.*,u2.url_name parentName,u2.u_id parentUid from sec_url u1 INNER JOIN sec_url u2 on u1.parentId = u2.u_id where u1.u_id = #{id}
+  </select>
+  
+  <select id="getByParentCode" parameterType="String" resultMap="baseResultMap">
+  select u1.* from sec_url u1 INNER JOIN sec_url u2 on u1.parentId = u2.u_id where u1.dispaly = '0' and u2.code = #{parentCode}
+   	ORDER BY u1.orderValue asc
+  </select>
+  
+  <select id="findAllNoDispaly" resultMap="urlResultMap">
+    <!-- select * from sec_url where parentId is not null and dispaly = 0 ORDER BY orderValue asc -->
+  	<![CDATA[
+  	select * from sec_url u where (u.parentId is not null or u.parentId <> '') 
+  	and (u.code is null or u.parentId = '') 
+	and dispaly = 0 ORDER BY orderValue asc
+	]]>
+  </select>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from sec_url where u_id = #{id}
+  </delete>
+  
+  <delete id="deletePKPermission" parameterType="String">
+  	delete from sec_permission_url where uid = #{id}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="Url">
+  	insert into sec_url(u_id,address,url_name,ename,dispaly,orderValue,parentId,code,className,template) 
+  	values(#{id},#{address},#{urlname},#{ename},#{dispaly},#{orderValue},#{parentId},#{code},#{className},#{template})
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="Url">
+  	update sec_url 
+  	<set> 
+	  	<if test="address != null and address != '' ">address = #{address},</if>
+	  	<if test="urlname != null and urlname != '' ">url_name = #{urlname},</if>
+	  	<if test="ename != null and ename != '' ">ename = #{ename},</if>
+	  	<if test="dispaly != null and dispaly != '' ">dispaly = #{dispaly},</if>
+	  	<if test="orderValue != null">orderValue = #{orderValue},</if>
+	  	<if test="parentId != null and parentId != '' ">parentId = #{parentId},</if>
+	  	<if test="className != null and className != '' ">className = #{className},</if>
+	  	<if test="code != null and code != '' ">code = #{code},</if>
+	  	<if test="template != null and template != '' ">template = #{template}</if>
+  	</set>
+  	where u_id = #{id}
+  </update>
+  
+  <select id="findAllParentNode" resultType="java.util.LinkedHashMap">
+ 	select * from sec_url u where (u.parentId is null or u.parentId = '') and u.dispaly = 0 and 
+	(u.code is null or u.parentId = '')
+	ORDER BY u.orderValue asc 
+ </select>
+  
+  <select id="findAllParentNodeAround" resultType="java.util.LinkedHashMap">
+  	select * from sec_url u where (u.parentId is null or u.parentId = '') and dispaly = 0 ORDER BY u.orderValue asc
+  </select>
+  
+  <select id="selectPkPermissionUrl"  resultType="java.util.LinkedHashMap">
+	<choose>
+		<when test="list != null">
+			select u.* from sec_permission p 
+			join sec_permission_url up on up.pid = p.p_id
+			join sec_url u on up.uid = u.u_id where p.p_id in 
+			<foreach collection="list" item="list" open="(" close=")" separator="," >
+		 		#{list}
+			</foreach>
+			<![CDATA[
+			and p.deleted = 0 and u.parentId is not null and u.parentId <> '' and (u.code is null or u.code = '') and u.dispaly = 0 ORDER BY u.orderValue asc
+		    ]]>
+		</when>
+		<otherwise>
+			select u.* from sec_url u where
+			<![CDATA[
+			u.parentId is not null and u.parentId <> '' and (u.code is null or u.code = '') and u.dispaly = 0 ORDER BY u.orderValue asc
+		    ]]>
+		</otherwise>
+	</choose>
+  </select>
+  
+  <select id="findAllFrontParentNode" resultMap="urlResultMap">
+  	<![CDATA[
+  	select * from sec_url u where (u.parentId is null or u.parentId = '') and (u.code is not null or u.code <> '') and u.dispaly = 0 order by u.orderValue asc
+ 	]]>
+  </select>
+  
+  <select id="findAllFrontSonNode" resultMap="urlResultMap">
+  <![CDATA[
+  select * from sec_url u where (u.code is not null or u.code <> '') and (u.parentId is not null or u.parentId <> '') and u.dispaly = 0 order by u.orderValue asc
+  ]]>
+  </select>
+  
+  <select id="findMaxOrder" resultType="int">
+  	select max(u.orderValue) orderValue from sec_url u
+  </select>
+  
+  <select id="selectByPkCode" resultType="int">
+  	select count(1) from sec_url u where u.code = #{code}
+  	<if test="id != null and id != ''">
+  		and u.u_id != #{id}
+  	</if>
+  </select>
+  
+  <select id="selectByPkPermission" parameterType="String" resultType="int">
+  	select count(1) from sec_url u JOIN sec_permission_url pu on u.u_id = pu.uid
+	LEFT JOIN sec_permission p on p.p_id = pu.pid 
+	where p.deleted = 0 and u.u_id = #{id}
+  </select>
+  
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.map.MapPassMapper" >
+    <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapPass" >
+    	<id column="id" property="id" jdbcType="CHAR" />
+        <result column="start" property="start" jdbcType="CHAR" />
+        <result column="end" property="end" jdbcType="CHAR" />
+        <result column="path" property="path" jdbcType="LONGVARCHAR" />
+        <result column="length" property="length" jdbcType="DOUBLE" />
+        <result column="area" property="area" jdbcType="CHAR" />
+        <result column="cycle_way" property="cycleWay" jdbcType="CHAR" />
+        <result column="foot_way" property="footWay" jdbcType="CHAR" />
+        <result column="drive_way" property="driveWay" jdbcType="CHAR" />
+        <result column="traffic_control" property="trafficControl" jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,start, end, path, length, area, cycle_way, foot_way, drive_way, traffic_control
+    </sql>
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where id = #{id,jdbcType=CHAR}
+    </select>
+
+    <select id="getByStartEnd" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where start = #{start,jdbcType=CHAR}
+          and end = #{end,jdbcType=CHAR}
+    </select>
+    
+    <select id="get2Way" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where traffic_control='0' and ((start = #{p2,jdbcType=CHAR} and end = #{p1,jdbcType=CHAR})
+          or (start = #{p1,jdbcType=CHAR} and end = #{p2,jdbcType=CHAR}))
+    </select>
+    
+    
+    <select id="getList" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where 1=1
+        	<if test="start != null" >
+                and start = #{start,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="end != null" >
+                and end = #{end,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="path != null" >
+                and path = #{path,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="length != null" >
+                and length = #{length,jdbcType=DOUBLE}
+            </if>
+            <if test="area != null" >
+                and area = #{area,jdbcType=CHAR}
+            </if>
+            <if test="cycleWay != null" >
+                and cycle_way = #{cycleWay,jdbcType=CHAR}
+            </if>
+            <if test="footWay != null" >
+                and foot_way = #{footWay,jdbcType=CHAR}
+            </if>
+            <if test="driveWay != null" >
+                and drive_way = #{driveWay,jdbcType=CHAR}
+            </if>
+            <if test="trafficControl != null" >
+                and traffic_control = #{trafficControl,jdbcType=CHAR}
+            </if>
+    </select>
+    
+    <select id="getByAreaId" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where area = #{areaId,jdbcType=CHAR}
+    </select>
+    <select id="getAvailableByAreaId" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from a_pass
+        where traffic_control='0' 
+        	<if test="type == 'bicycle'" >
+                and cycle_way = '1'
+            </if>
+            <if test="type == 'foot'" >
+                and foot_way = '1'
+            </if>
+            <if test="type == 'auto'" >
+                and drive_way = '1'
+            </if>        
+        and area = #{areaId,jdbcType=CHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapPass" >
+        insert into a_pass (id,start, end, path, length, 
+            area, cycle_way, foot_way, drive_way, 
+            traffic_control)
+        values (#{id,jdbcType=CHAR}, #{start,jdbcType=CHAR}, #{end,jdbcType=CHAR}, #{path,jdbcType=LONGVARCHAR}, #{length,jdbcType=DOUBLE}, 
+            #{area,jdbcType=CHAR}, #{cycleWay,jdbcType=CHAR}, #{footWay,jdbcType=CHAR}, #{driveWay,jdbcType=CHAR}, 
+            #{trafficControl,jdbcType=CHAR})
+    </insert>
+
+    <update id="updateByPk" parameterType="com.imap.cloud.common.entity.map.MapPass" >
+        update a_pass
+        <set >
+            <if test="path != null" >
+                path = #{path,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="length != null" >
+                length = #{length,jdbcType=DOUBLE},
+            </if>
+            <if test="area != null" >
+                area = #{area,jdbcType=CHAR},
+            </if>
+            <if test="cycleWay != null" >
+                cycle_way = #{cycleWay,jdbcType=CHAR},
+            </if>
+            <if test="footWay != null" >
+                foot_way = #{footWay,jdbcType=CHAR},
+            </if>
+            <if test="driveWay != null" >
+                drive_way = #{driveWay,jdbcType=CHAR},
+            </if>
+            <if test="trafficControl != null" >
+                traffic_control = #{trafficControl,jdbcType=CHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=CHAR}
+        <!-- where start = #{start,jdbcType=CHAR}
+          and end = #{end,jdbcType=CHAR} -->
+    </update>
+    
+    <delete id="deleteById">
+        delete from a_pass
+        where id = #{id,jdbcType=CHAR}
+    </delete>
+
+    <delete id="deleteBy">
+        delete from a_pass
+        where start = #{start,jdbcType=CHAR}
+          and end = #{end,jdbcType=CHAR}
+    </delete>
+    
+    <delete id="deleteByArea" parameterType="java.lang.String">
+        delete from a_pass
+        where area = #{areaId,jdbcType=CHAR}
+    </delete>
+
+</mapper>

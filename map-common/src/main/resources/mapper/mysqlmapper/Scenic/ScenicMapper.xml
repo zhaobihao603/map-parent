@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.scenic.ScenicMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.scenic.Scenic">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="area" jdbcType="CHAR" property="area" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="default_photo_id" jdbcType="CHAR" property="default_photo_id" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+  	<!-- <collection property="UploadRecordList" 
+  		resultMap="com.imap.cloud.common.dao.system.SysFileMapper.BaseResultMap"></collection> -->
+  </resultMap>
+  
+  <resultMap id="BaseResultMapWithOrg" type="com.imap.cloud.common.entity.scenic.Scenic" extends="BaseResultMap">
+        <collection property="UploadRecordList" column="id"
+        select="com.imap.cloud.common.dao.system.SysFileMapper.selectScenicPhoto"></collection>
+  </resultMap>
+ 
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMapWithOrg">
+		SELECT
+			*
+		FROM
+			sys_scenic s
+		<!-- LEFT JOIN connect_scenis_upload c on s.id=c.scenicId
+		LEFT JOIN sys_file u ON u.id=c.uploadId -->
+		where s.id = #{id} 
+  </select>
+  
+  <!-- 建立与上传连接关联 -->
+  <insert id="linkScenicUpload">
+    insert into connect_scenis_upload (scenicid, uploadid)
+    values (#{scenicid,jdbcType=CHAR}, #{uploadid,jdbcType=CHAR})
+  </insert>
+  
+   <!-- 删除与上传之间的关联 -->
+  <delete id="deleteScenicUpload">
+    delete from connect_scenis_upload where scenicId=#{scenicid,jdbcType=CHAR}
+  </delete>
+  
+  
+  <!-- 删除景点单张图片与上传之间的关联 -->
+  <delete id="deleteUploadId" parameterType="java.lang.String">
+  	delete from connect_scenis_upload where uploadId=#{uploadId,jdbcType=CHAR}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_scenic
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.scenic.Scenic">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into sys_scenic (id,area, createtime, 
+      name,ename, x, y, default_photo_id, 
+      description)
+    values (#{id,jdbcType=CHAR}, #{area,jdbcType=CHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{name,jdbcType=VARCHAR},#{ename,jdbcType=VARCHAR}, #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{default_photo_id,jdbcType=CHAR}, 
+      #{description,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  <update id="updateByPks" >
+    update sys_scenic
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="default_photo_id != null">
+        default_photo_id = #{default_photo_id,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+ 
+  <!-- 设置默认图片 -->
+   <update id="updatePhotoId" >
+    update sys_scenic
+    set 
+      default_photo_id = #{default_photo_id,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>  
+  
+   <!-- 查询所有信息 -->
+  <select id="selectAll" resultMap="BaseResultMapWithOrg" parameterType="com.imap.cloud.common.entity.scenic.Scenic">
+	select * from sys_scenic s LEFT JOIN sys_file u
+		on s.default_photo_id = u.id	
+    where 1=1
+   	<if test ="name!=null">
+		and (name like CONCAT('%',#{name},'%') or ename like CONCAT('%',#{name},'%'))
+   </if>
+    <if test="area!=null">
+   		and area=#{area}
+   </if>
+   order by createtime desc
+  </select>
+</mapper>

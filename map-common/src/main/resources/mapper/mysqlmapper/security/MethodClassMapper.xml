@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.security.MethodClassMapper">
+  
+  <resultMap id="MethodClassResultMap" type="MethodClass">
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="interceptType" property="interceptType" jdbcType="CHAR" />
+    <result column="type" property="type" jdbcType="CHAR" />
+    
+    <collection property="permissionSet" ofType="Permission" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap"></collection>
+  </resultMap>
+  
+  <select id="selectAll" parameterType="MethodClass" resultMap="MethodClassResultMap">
+  	<choose>
+  		<when test="id == null or id == ''">
+  			select * from sec_methodclass m
+  			<where>
+  				<if test="name != null and name != ''">
+  					name like CONCAT('%',#{name},'%' )
+  				</if>
+  			</where>
+  		</when>
+  	</choose>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="MethodClassResultMap">
+  	select * from sec_methodclass m where m.id = #{id}
+  </select>
+  
+  <select id="findAllInterceptType" resultMap="MethodClassResultMap">
+    SELECT * FROM sec_methodclass m where m.interceptType = 0
+  </select>
+  
+  <select id="selectAllMethodClassIntercept" resultMap="MethodClassResultMap">
+    SELECT * FROM sec_methodclass m where m.interceptType = 1 
+  </select>
+ 
+  <!-- 返回方法或类URL引用的权限来查询可以访问的角色(角色权限)-->
+  <select id="selectAllMethodClassInterceptRole" resultMap="MethodClassResultMap">
+  	select * from sec_methodclass m 
+	INNER JOIN sec_methodclass_permission mp on m.id = mp.mid 
+	INNER JOIN sec_permission p on p.p_id = mp.pid
+	INNER JOIN sec_permission_role pr on p.p_id = pr.pid 
+	INNER JOIN sec_role r on pr.rid = r.r_id 
+	where p.deleted = 0 and r.deleted = 0 and r.isEnabled = 0 and m.interceptType = 0
+  </select>
+  
+  <!-- 返回方法或类URL引用的权限来查询可以访问的用户(个人权限) -->
+  <select id="selectAllMethodClassInterceptUser" resultMap="MethodClassResultMap">
+  	select * from sec_methodclass m 
+	INNER JOIN sec_methodclass_permission mp on m.id = mp.mid 
+	INNER JOIN sec_permission p on p.p_id = mp.pid
+	INNER JOIN sec_permission_user pu on p.p_id = pu.pid 
+	INNER JOIN sec_user us on pu.uid = us.a_id 
+	where us.deleted = 0 and us.isAccountNonExpired = 0 AND us.isEnabled = 0
+	and us.isAccountNonLocked = 0 and us.isCredentialsNonExpired = 0 and p.deleted = 0 
+	and m.interceptType = 0
+  </select>
+  
+  <select id="selectInspectQuotePermission" parameterType="String" resultType="int">
+  	select count(1) from sec_methodclass m INNER JOIN sec_methodclass_permission mp 
+	on m.id = mp.mid LEFT JOIN sec_permission p on p.p_id = mp.pid
+	WHERE p.deleted = 0 and m.id = #{id}
+  </select>
+  
+  <delete id="deleteByPk" parameterType="String">
+	delete from sec_methodclass where id = #{id}
+  </delete>
+  
+  <delete id="deleteByPkPermission" parameterType="String">
+    delete from sec_methodclass_permission where mid = #{id}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="MethodClass">
+  	INSERT into sec_methodclass(id,name,url,interceptType,type) 
+  	value(#{id},#{name},#{url},#{interceptType},#{type})
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="MethodClass">
+  	update sec_methodclass
+  	<set>
+  		<if test="name != null and name != ''">name = #{name},</if>
+  		<if test="url != null and url != ''">url = #{url},</if>
+  		<if test="interceptType != null and interceptType != ''">interceptType = #{interceptType},</if>
+  		<if test="type != null and type != ''">type = #{type}</if>
+  	</set>
+  	where id = #{id}
+  </update>
+  
+</mapper>

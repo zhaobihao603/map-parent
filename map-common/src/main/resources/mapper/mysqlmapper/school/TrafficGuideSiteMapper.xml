@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.school.TrafficGuideSiteMapper">
+	
+  <resultMap type="TrafficGuideSite" id="trafficGuideSiteResultMap">
+  	<id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+    <result column="x" property="x" jdbcType="VARCHAR" />
+    <result column="y" property="y" jdbcType="VARCHAR" />
+    <result column="route_id" property="route_id" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectAll" parameterType="TrafficGuideSite" resultMap="trafficGuideSiteResultMap">
+  	select * from school_trafficguide_site s where s.route_id = #{route_id}
+  	<if test="name != null and name != ''">
+  		and name like CONCAT('%',#{name},'%' ) 
+  	</if>
+  </select>
+  
+   <select id="selectByPk" parameterType="String" resultMap="trafficGuideSiteResultMap">
+   	select * from school_trafficguide_site where id = #{id}
+   </select>
+  
+  <insert id="insertSelective" parameterType="TrafficGuideSite">
+  	insert into school_trafficguide_site(id,name,detail,x,y,route_id)
+  	value(#{id},#{name},#{detail},#{x},#{y},#{route_id})
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="TrafficGuideSite">
+  	update school_trafficguide_site
+  	<set>
+  		<if test="name != null and name != ''">name = #{name},</if>
+  		<if test="detail != null and detail != ''">detail = #{detail},</if>
+  		<if test="x != null and x != ''">x = #{x},</if>
+  		<if test="y != null and y != ''">y = #{y}</if>
+  	</set>
+  	where id = #{id}
+  </update>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from school_trafficguide_site where id = #{id}
+  </delete>
+  
+</mapper>

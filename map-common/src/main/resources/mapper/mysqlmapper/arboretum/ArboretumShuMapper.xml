@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.arboretum.ArboretumShuMapper" >
+
+  <resultMap id="arboretumShuResultMap" type="ArboretumShu" >
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="ChineseName" property="chinesename" jdbcType="VARCHAR" />
+    <result column="Genera" property="genera" jdbcType="CHAR" />
+    <result column="shutype" property="shutype" jdbcType="CHAR" />
+    <result column="LatinName" property="latinname" jdbcType="VARCHAR" />
+    <result column="NickName" property="nickname" jdbcType="VARCHAR" />
+    <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="shuZong" property="shuzong" jdbcType="VARCHAR" />
+    <result column="shuAge" property="shuage" jdbcType="INTEGER" />
+    <result column="area" property="area" jdbcType="CHAR" />
+    <result column="shuCeng" property="shuceng" jdbcType="VARCHAR" />
+    <result column="shuHeight" property="shuheight" jdbcType="VARCHAR" />
+    <result column="x" property="x" jdbcType="VARCHAR" />
+    <result column="y" property="y" jdbcType="VARCHAR" />
+    <result column="characteristics" property="characteristics" jdbcType="LONGVARCHAR" />
+    <result column="habitat" property="habitat" jdbcType="LONGVARCHAR" />
+    <result column="MainValue" property="mainvalue" jdbcType="LONGVARCHAR" />
+    <result column="PestControl" property="pestcontrol" jdbcType="LONGVARCHAR" />
+    <result column="donationUnit" property="donationunit" jdbcType="LONGVARCHAR" />
+    <result column="GrowthHabit" property="growthhabit" jdbcType="LONGVARCHAR" />
+    
+    <!-- 植物的养护记录 -->
+    <collection property="zbglList" ofType="ArboretumZbgl" resultMap="com.imap.cloud.common.dao.arboretum.ArboretumZbglMapper.arboretumZbglResultMap"/>
+  </resultMap>
+  
+  <resultMap id="arboretumShuResultMapTwo" type="ArboretumShu" >
+    <id column="id" property="id" jdbcType="CHAR" />
+  </resultMap>
+  
+  <!-- 条件查询，查询垂直空间和根据树木的中文名称进行查询 -->
+  <select id="selectAll" parameterType="ArboretumShu" resultMap="arboretumShuResultMap">
+  	select id,ChineseName,area from arboretum_shu 
+  	<where>
+	  	<if test="shutype != null and shutype != '' ">
+	  	    and shutype = #{shutype}
+	  	</if>
+	  	<if test="chinesename != null and chinesename != ''">
+	  		and ChineseName like CONCAT('%',#{chinesename},'%' )
+	  	</if>
+	  	<if test="area != null and area != ''">
+	  		and area = #{area}
+	  	</if>
+  	</where> 
+  </select>
+  
+  <!-- 条件查询、根据林业分类进行查询 -->
+  <select id="selectPkTreeNode" parameterType="map" resultMap="arboretumShuResultMap">
+  	<!-- SELECT DISTINCT a.generaText as genera,a2.text as NickName,a.id,a.ChineseName,a.area from 
+	(SELECT c.shortvalue as generaText,a.*  FROM arboretum_shu a 
+	LEFT JOIN common_datadir_subitem c 
+	on a.shutype = c.id where a.genera = 29) 
+	a LEFT JOIN arboretum_tree a2 ON a.genera = a2.id   -->
+	select s.id,s.ChineseName,s.area from arboretum_shu s LEFT JOIN arboretum_tree t on s.genera = t.id
+	where s.genera in 
+	<foreach collection="tid" item="tid" open="(" close=")" separator="," >
+		 #{tid}
+	</foreach>
+  </select>
+  
+  <!-- 条件查询、根据林业分类进行查询,总数统计 -->
+  <select id="selectPkTreeNodeCount" resultType="int">
+  	select count(s.id) from arboretum_shu s 
+  	LEFT JOIN arboretum_tree t on s.genera = t.id
+	where s.genera in 
+	<foreach collection="list" item="array" open="(" close=")" separator="," >
+		 #{array}
+	</foreach>
+  </select>
+  
+  <!-- index页面使用，搜索查询垂直空间查询列表 -->
+  <select id="selectPageIndex"  parameterType="map" resultMap="arboretumShuResultMap">
+  	SELECT DISTINCT a.generaText as genera,a2.text as NickName,a.id,a.ChineseName,a.area,a.x,a.y,a.imgurl from 
+	(SELECT c.shortvalue as generaText,a.*  FROM arboretum_shu a 
+	LEFT JOIN common_datadir_subitem c 
+	on a.shutype = c.id where area = #{shu.area}
+  	<if test="shu.shutype != null and shu.shutype != '' ">
+  	    and shutype = #{shu.shutype}
+  	</if>
+  	<if test="shu.chinesename != null and shu.chinesename != ''">
+  		and ChineseName like CONCAT('%',#{shu.chinesename},'%' )
+  	</if>
+	 ) a LEFT JOIN arboretum_tree a2 ON a.genera = a2.id 
+  </select>
+  
+  <select id="selectPageIndexCount" parameterType="ArboretumShu" resultType="int">
+  	SELECT count(a.id) from arboretum_shu a where area = #{area}
+  	<if test="shutype != null and shutype != '' ">
+  	    and shutype = #{shutype}
+  	</if>
+  	<if test="chinesename != null and chinesename != ''">
+  		and ChineseName like CONCAT('%',#{chinesename},'%' )
+  	</if>
+  </select>
+  
+  <!-- index页面使用，搜索查询Tree列表 -->
+  <select id="selectPageTreeNodeIndex" parameterType="map" resultMap="arboretumShuResultMap">
+	SELECT DISTINCT a.generaText as genera,a2.text as NickName,a.id,a.ChineseName,a.area,a.x,a.y,a.imgurl from 
+	(SELECT c.shortvalue as generaText,a.*  FROM arboretum_shu a 
+	LEFT JOIN common_datadir_subitem c 
+	on a.shutype = c.id where area = #{area}
+  	and a.genera in 
+  	<foreach collection="treeNodeArray" item="treeNodeArray" open="(" close=")" separator="," >
+		 #{treeNodeArray}
+	</foreach>
+	 ) a LEFT JOIN arboretum_tree a2 ON a.genera = a2.id 
+  </select>
+  
+  <select id="findShuData" parameterType="map" resultMap="arboretumShuResultMapTwo">
+  	<![CDATA[
+  		select * from arboretum_shu where 
+  		x >= #{xmin} and x <= #{ymin} and y >= #{xmax} and y <= #{ymax}
+  	]]>
+  </select>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from arboretum_shu where id = #{id}	
+  </delete>
+  
+  <delete id="deleteByPkZbgl" parameterType="String">
+   delete from arboretum_zbgl_shu where sid = #{id}
+  </delete>
+  
+  <select id="selectByPk" parameterType="String" resultMap="arboretumShuResultMap">
+  	select * from arboretum_shu s left join arboretum_zbgl_shu zs on s.id = zs.sid
+	left join arboretum_zbgl z on z.id =  zs.zid  
+	left join arboretum_zbglyhjl y on y.zid = z.id where s.id = #{id} ORDER BY y.datetime desc
+  </select>
+  
+  <insert id="insertSelective" parameterType="ArboretumShu" >
+    insert into arboretum_shu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="chinesename != null" >
+        ChineseName,
+      </if>
+      <if test="genera != null" >
+        Genera,
+      </if>
+      <if test="shutype != null" >
+        shutype,
+      </if>
+      <if test="latinname != null" >
+        LatinName,
+      </if>
+      <if test="nickname != null" >
+        NickName,
+      </if>
+      <if test="imgurl != null" >
+        imgurl,
+      </if>
+      <if test="shuzong != null" >
+        shuZong,
+      </if>
+      <if test="shuage != null" >
+        shuAge,
+      </if>
+      <if test="shuceng != null" >
+        shuCeng,
+      </if>
+      <if test="shuheight != null" >
+        shuHeight,
+      </if>
+      <if test="x != null" >
+        x,
+      </if>
+      <if test="y != null" >
+        y,
+      </if>
+      <if test="characteristics != null" >
+        characteristics,
+      </if>
+      <if test="habitat != null" >
+        habitat,
+      </if>
+      <if test="mainvalue != null" >
+        MainValue,
+      </if>
+      <if test="pestcontrol != null" >
+        PestControl,
+      </if>
+      <if test="donationunit != null" >
+        donationUnit,
+      </if>
+      <if test="growthhabit != null" >
+        GrowthHabit,
+      </if>
+      <if test="area != null" >
+      	area,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="chinesename != null" >
+        #{chinesename,jdbcType=VARCHAR},
+      </if>
+      <if test="genera != null" >
+        #{genera,jdbcType=CHAR},
+      </if>
+      <if test="shutype != null" >
+        #{shutype,jdbcType=CHAR},
+      </if>
+      <if test="latinname != null" >
+        #{latinname,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="shuzong != null" >
+        #{shuzong,jdbcType=VARCHAR},
+      </if>
+      <if test="shuage != null" >
+        #{shuage,jdbcType=INTEGER},
+      </if>
+      <if test="shuceng != null" >
+        #{shuceng,jdbcType=VARCHAR},
+      </if>
+      <if test="shuheight != null" >
+        #{shuheight,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null" >
+        #{x,jdbcType=VARCHAR},
+      </if>
+      <if test="y != null" >
+        #{y,jdbcType=VARCHAR},
+      </if>
+      <if test="characteristics != null" >
+        #{characteristics,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="habitat != null" >
+        #{habitat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainvalue != null" >
+        #{mainvalue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pestcontrol != null" >
+        #{pestcontrol,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="donationunit != null" >
+        #{donationunit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="growthhabit != null" >
+        #{growthhabit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="ArboretumShu" >
+    update arboretum_shu
+    <set >
+      <if test="chinesename != null and chinesename != ''" >
+        ChineseName = #{chinesename,jdbcType=VARCHAR},
+      </if>
+      <if test="genera != null and genera != ''" >
+        Genera = #{genera,jdbcType=CHAR},
+      </if>
+      <if test="shutype != null" >
+        shutype = #{shutype,jdbcType=CHAR},
+      </if>
+      <if test="latinname != null and latinname != ''" >
+        LatinName = #{latinname,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null and nickname != ''" >
+        NickName = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null and imgurl != ''" >
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="shuzong != null  and shuzong != ''" >
+        shuZong = #{shuzong,jdbcType=VARCHAR},
+      </if>
+      <if test="shuage != null" >
+        shuAge = #{shuage,jdbcType=INTEGER},
+      </if>
+      <if test="shuceng != null and shuceng != ''" >
+        shuCeng = #{shuceng,jdbcType=VARCHAR},
+      </if>
+      <if test="shuheight != null and shuheight != ''" >
+        shuHeight = #{shuheight,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null and x != ''" >
+        x = #{x,jdbcType=VARCHAR},
+      </if>
+      <if test="y != null  and y != ''" >
+        y = #{y,jdbcType=VARCHAR},
+      </if>
+      <if test="characteristics != null  and characteristics != ''" >
+        characteristics = #{characteristics,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="habitat != null and habitat != ''" >
+        habitat = #{habitat,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mainvalue != null and mainvalue != ''" >
+        MainValue = #{mainvalue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pestcontrol != null and pestcontrol != ''" >
+        PestControl = #{pestcontrol,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="donationunit != null and donationunit != ''" >
+        donationUnit = #{donationunit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="growthhabit != null and growthhabit != '' " >
+        GrowthHabit = #{growthhabit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="area != null" >
+        area =  #{area,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

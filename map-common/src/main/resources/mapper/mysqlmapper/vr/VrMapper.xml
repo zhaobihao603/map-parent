@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.vr.VrMapper">
+  <resultMap id="BaseResultMap" type="Vr">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="vrtype" jdbcType="CHAR" property="vrtype" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="imageurl" jdbcType="VARCHAR" property="imageurl" />
+    <result column="mainhtml" jdbcType="VARCHAR" property="mainhtml" />
+    <result column="vruploadUrl" jdbcType="VARCHAR" property="vruploadUrl" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="deleted" jdbcType="CHAR" property="deleted" />
+    <result column="area" jdbcType="CHAR" property="area" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapWithOrg" type="Vr" extends="BaseResultMap">
+        <collection property="UploadRecordList" column="id"
+        select="com.imap.cloud.common.dao.system.SysFileMapper.selectVrFiles"></collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, vrtype, description, imageurl, mainhtml, name,ename, vruploadUrl, x, y, deleted, area
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMapWithOrg">
+	   SELECT
+			m.*
+		FROM
+			map_vr m
+	    where m.id = #{id,jdbcType=CHAR}
+  </select>
+  
+  <!-- 删除一条记录 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from map_vr
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+   <!-- 新增一条记录 -->
+  <insert id="insert" parameterType="Vr">
+    insert into map_vr (id,vrtype, description, 
+      imageurl, mainhtml, name, ename,
+      vruploadUrl, x, y, deleted, 
+      area)
+    values (#{id,jdbcType=CHAR},#{vrtype,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}, 
+      #{imageurl,jdbcType=VARCHAR}, #{mainhtml,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{ename,jdbcType=VARCHAR}, 
+      #{vruploadUrl,jdbcType=VARCHAR}, #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{deleted,jdbcType=CHAR}, 
+      #{area,jdbcType=CHAR})
+  </insert>
+  
+  <!--建立VR与上传的连接 -->
+  <insert id="linkVrUpload">
+    insert into connect_vr_upload (vrId, uploadId)
+    values (#{vrId,jdbcType=CHAR}, #{uploadId,jdbcType=CHAR})
+  </insert>
+  
+    <!-- 修改与上传连接关联 -->
+  	<update id="updateVrUpload" >
+  	update connect_vr_upload
+	set
+	 uploadId=#{uploadId,jdbcType=CHAR}
+	where vrId=#{vrId,jdbcType=CHAR}
+  	</update>
+  
+  
+  <!-- 删除与上传之间的关联 -->
+  <delete id="deleteVrUpload">
+    delete from connect_vr_upload where vrid=#{vrId,jdbcType=CHAR}
+  </delete>
+  
+  <!-- 查询所有信息 -->
+  <select id="selectAll" resultMap="BaseResultMapWithOrg" parameterType="Vr" >
+	SELECT
+		m.*
+	FROM
+		map_vr m
+  	where 1=1
+    <if test ="name!=null">
+		and (m.name like CONCAT('%',#{name},'%')
+			or m.ename like CONCAT('%',#{name},'%'))
+   </if> 
+   <if test="area!=null">
+    and m.area=#{area}
+   </if>
+   <if test="vrtype!=null">
+    and m.vrtype=#{vrtype,jdbcType=CHAR}
+   </if>
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="Vr">
+    update map_vr
+    <set>
+      <if test="vrtype != null">
+        vrtype = #{vrtype,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="imageurl != null">
+        imageurl = #{imageurl,jdbcType=VARCHAR},
+      </if>
+      <if test="mainhtml != null">
+        mainhtml = #{mainhtml,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="vruploadUrl != null">
+        vruploadUrl = #{vruploadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+</mapper>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.system.BackupMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.system.Backup">
+    <result column="id" jdbcType="CHAR" property="id" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="db_type" jdbcType="VARCHAR" property="dbType" />
+    <result column="backup_date" jdbcType="TIMESTAMP" property="backupDate" />
+    <result column="uploader" jdbcType="CHAR" property="uploader" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <resultMap id="BaseResultMapWithUploader" type="com.imap.cloud.common.entity.system.Backup" extends="BaseResultMap">
+ 	<association property="upld"  column="uploader" select="getUploader">
+  	</association>
+  </resultMap>
+  <select id="getUploader" parameterType="java.lang.String" resultType="com.imap.cloud.common.entity.security.User">
+  	select * from sec_user a where a.a_id = #{a_id} and a.deleted = 0 
+  </select>
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.system.Backup">
+ 	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+		select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+    insert into sys_backup (id, file_name, 
+      file_url, db_type, backup_date, uploader, 
+      deleted, description)
+    values (#{id,jdbcType=CHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{fileUrl,jdbcType=VARCHAR}, #{dbType,jdbcType=VARCHAR}, #{backupDate,jdbcType=TIMESTAMP}, 
+      #{uploader,jdbcType=CHAR}, #{deleted,jdbcType=BIT}, #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="save" parameterType="com.imap.cloud.common.entity.system.Backup">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+		select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+    insert into sys_backup
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="dbType != null">
+        db_type,
+      </if>
+      <if test="backupDate != null">
+        backup_date,
+      </if>
+      <if test="uploader != null">
+        uploader,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="dbType != null">
+        #{dbType,jdbcType=VARCHAR},
+      </if>
+      <if test="backupDate != null">
+        #{backupDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uploader != null">
+        #{uploader,jdbcType=CHAR},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.imap.cloud.common.entity.system.Backup">
+    update sys_backup
+    <set>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="dbType != null">
+        db_type = #{dbType,jdbcType=VARCHAR},
+      </if>
+      <if test="backupDate != null">
+        backup_date = #{backupDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="uploader != null">
+        uploader = #{uploader,jdbcType=CHAR},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR},
+  </update>
+  <update id="updateById" parameterType="com.imap.cloud.common.entity.system.Backup">
+    update sys_backup
+    set 
+      file_name = #{fileName,jdbcType=VARCHAR},
+      file_url = #{fileUrl,jdbcType=VARCHAR},
+      db_type = #{dbType,jdbcType=VARCHAR},
+      backup_date = #{backupDate,jdbcType=TIMESTAMP},
+      uploader = #{uploader,jdbcType=CHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      description = #{description,jdbcType=VARCHAR}
+    where id= #{id,jdbcType=CHAR}
+  </update>
+  
+  <delete id="deleteById" parameterType="java.lang.String">
+    delete from sys_backup where id= #{id,jdbcType=CHAR}
+  </delete>
+  <select id="count" resultType="java.lang.Long">
+    select count(*) from sys_backup
+  </select>
+  
+  <select id="load" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from sys_backup where id= #{id,jdbcType=CHAR}
+  </select>
+  
+  <select id="select" resultMap="BaseResultMapWithUploader">
+	select * from sys_backup 
+	  	where 1=1 
+  	<if test="fileName!=null and fileName!=''">
+  		and file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+  	</if>
+  	<if test="fileUrl!=null and fileUrl!=''">
+  		and file_url = #{fileUrl,jdbcType=VARCHAR}
+  	</if>
+  	<if test="deleted!=null">
+  		and deleted = #{deleted,jdbcType=BIT}
+  	</if>
+  	<if test="dbType!=null and dbType!=''">
+  		and db_type = #{dbType,jdbcType=VARCHAR}
+  	</if>
+  	<if test="startTime !=null and startTime!=''">
+		<![CDATA[and DATE_FORMAT(backup_date, '%Y-%m-%d %H:%i:%S')>=  DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')]]>
+	</if>
+	<if test="endTime !=null and endTime!=''">
+		<![CDATA[and DATE_FORMAT(backup_date, '%Y-%m-%d %H:%i:%S')<  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')]]>
+	</if>
+  	order by backup_date desc
+  </select>
+  
+  <!-- 循环查询上传文件 -->
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select * from sys_backup s  where
+    <foreach collection="array" index="index" item="list" separator="or">  
+            s.id = #{list}   
+    </foreach>  
+  </select>
+  
+</mapper>

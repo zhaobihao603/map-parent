@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.system.TrackLogMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.system.TrackLog">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="session_id" jdbcType="VARCHAR" property="sessionId" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="page" jdbcType="VARCHAR" property="page" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="access_time" jdbcType="TIMESTAMP" property="accessTime" />
+    <result column="stay_time" jdbcType="LONGVARCHAR" property="stayTime" />
+    <result column="device_type" jdbcType="VARCHAR" property="deviceType" />
+    <result column="os" jdbcType="VARCHAR" property="os" />
+    <result column="browser" jdbcType="VARCHAR" property="browser" />
+	<result column="browser_version" jdbcType="VARCHAR" property="browserVersion" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, session_id, ip, page, access_time,stay_time,user_name,device_type,os,browser,browser_version
+  </sql>
+  <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_tracklog
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <select id="getLatestLog"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_tracklog where session_id = #{sessionId,jdbcType=VARCHAR} and ip = #{ip,jdbcType=VARCHAR} order by access_time desc limit 0, 1
+  </select>
+  <select id="getPV" resultType="Integer">
+    select count(*) from sys_tracklog where access_time &gt;= #{startTime,jdbcType=TIMESTAMP} and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  </select>
+  <select id="getUV" resultType="Integer">
+    select count(ip) from( 
+		select distinct ip from sys_tracklog where access_time &gt;= #{startTime,jdbcType=TIMESTAMP} and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+	) log_temp 
+  </select>
+  <select id="countByIP" resultType="java.util.HashMap">
+  	select ip,count(*) as count,sum(stay_time) as sumTime from sys_tracklog 
+  	where 1=1 
+  	<if test="startTime!=null">
+  		and access_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="endTime!=null">
+  		and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  	</if>
+  	group by ip
+  </select>
+  <select id="countByPage" resultType="java.util.HashMap">
+  	select page,count(*) as count,sum(stay_time) as sumTime from sys_tracklog 
+  	where 1=1 
+  	<if test="startTime!=null">
+  		and access_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="endTime!=null">
+  		and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  	</if>
+  	group by page
+  </select>
+  <select id="countByDate" resultType="java.util.HashMap">
+  	select DATE_FORMAT(access_time,'%Y%m%d') date,count(id) count,sum(stay_time) sumTime 
+  	from sys_tracklog  
+  	where 1=1
+  		<if test="startTime!=null">
+  			and access_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+  		</if>
+  		<if test="startTime!=null">
+  			and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  		</if>
+  	group by date ORDER BY date
+  </select>
+  <!-- <'2016-10-31' and > '2016-11-11' -->
+  <select id="selectAll" resultMap="BaseResultMap">
+	select 
+    <include refid="Base_Column_List" />
+    from sys_tracklog
+    where 1=1
+  		<if test="startTime!=null">
+  			and access_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+  		</if>
+  		<if test="startTime!=null">
+  			and access_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  		</if>
+  	ORDER BY access_time desc
+  </select>
+  <delete id="deleteById" parameterType="java.lang.String">
+    delete from sys_tracklog
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.system.TrackLog">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into sys_tracklog (id, session_id, ip, 
+      page,user_name, access_time, stay_time,device_type,os,browser,browser_version
+      )
+    values (#{id,jdbcType=CHAR}, #{sessionId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{page,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR}, #{accessTime,jdbcType=TIMESTAMP}, 
+      #{stayTime,jdbcType=LONGVARCHAR},#{deviceType,jdbcType=VARCHAR},#{os,jdbcType=VARCHAR},
+      #{browser,jdbcType=VARCHAR},#{browserVersion,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.system.TrackLog">
+    insert into sys_tracklog
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sessionId != null">
+        session_id,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="page != null">
+        page,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="accessTime != null">
+        access_time,
+      </if>
+      <if test="stayTime != null">
+        stay_time,
+      </if>
+      <if test="deviceType != null">
+     	device_type,
+      </if>
+      <if test="os != null">
+     	os,
+      </if>
+      <if test="browser != null">
+        browser,
+      </if>
+      <if test="browserVersion != null">
+        browser_version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="sessionId != null">
+        #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="page != null">
+        #{page,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTime != null">
+        #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stayTime != null">
+        #{stayTime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="deviceType != null">
+      	#{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="os != null">
+      	#{os,jdbcType=VARCHAR},
+      </if>      
+      <if test="browser != null">
+        #{browser,jdbcType=VARCHAR},
+      </if>
+      <if test="browserVersion != null">
+        #{browserVersion,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByIdSelective" parameterType="com.imap.cloud.common.entity.system.TrackLog">
+    update sys_tracklog
+    <set>
+      <if test="sessionId != null">
+        session_id = #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="page != null">
+        page = #{page,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="accessTime != null">
+        access_time = #{accessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deviceType != null">
+        device_type = #{deviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="os != null">
+        os = #{os,jdbcType=VARCHAR},
+      </if>
+      <if test="stayTime != null">
+        stay_time = #{stayTime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="browser != null">
+        browser = #{browser,jdbcType=VARCHAR},
+      </if>
+      <if test="browserVersion != null">
+        browser_version = #{browserVersion,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateById" parameterType="com.imap.cloud.common.entity.system.TrackLog">
+    update sys_tracklog
+    set session_id = #{sessionId,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      page = #{page,jdbcType=VARCHAR},
+      access_time = #{accessTime,jdbcType=TIMESTAMP},
+      user_name = #{userName,jdbcType=VARCHAR},
+      device_type = #{deviceType,jdbcType=VARCHAR},
+      os = #{os,jdbcType=VARCHAR},
+      browser = #{browser,jdbcType=VARCHAR},
+      browser_version = #{browserVersion,jdbcType=VARCHAR},
+      stay_time = #{stayTime,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="addTime" parameterType="java.lang.Integer">
+    update sys_tracklog set stay_time = stay_time + #{time}
+  </update>
+</mapper>

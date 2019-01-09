@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.system.SysLogMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.system.SysLog">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="event_method" jdbcType="VARCHAR" property="eventMethod" />
+    <result column="event_method_desc" jdbcType="VARCHAR" property="eventMethodDesc" />
+    <result column="event_object" jdbcType="VARCHAR" property="eventObject" />
+    <result column="event_object_desc" jdbcType="VARCHAR" property="eventObjectDesc" />
+    <result column="log_time" jdbcType="TIMESTAMP" property="logTime" />
+    <result column="username" jdbcType="CHAR" property="username" />
+    <result column="params" jdbcType="VARCHAR" property="params" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, event_method, event_method_desc, event_object, event_object_desc, log_time, 
+    username,params
+  </sql>
+  <select id="pageRecord" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_log
+    where 1=1
+    <if test="username!=null">
+  		and username like CONCAT('%',#{username,jdbcType=VARCHAR},'%' )
+  	</if>
+    <if test="startTime!=null">
+  		and log_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+  	</if>
+  	<if test="endTime!=null">
+  		and log_time &lt; #{endTime,jdbcType=TIMESTAMP}
+  	</if>
+  	order by log_time desc
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_log
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from sys_log
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <!-- sys_guid() -->
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.system.SysLog">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into sys_log (id, event_method, event_method_desc, 
+      event_object, event_object_desc, log_time, 
+      username,params)
+    values (#{id,jdbcType=CHAR}, #{eventMethod,jdbcType=VARCHAR}, #{eventMethodDesc,jdbcType=VARCHAR}, 
+      #{eventObject,jdbcType=VARCHAR}, #{eventObjectDesc,jdbcType=VARCHAR}, #{logTime,jdbcType=TIMESTAMP}, 
+      #{username,jdbcType=CHAR},#{params})
+  </insert>
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.system.SysLog">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into sys_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="eventMethod != null">
+        event_method,
+      </if>
+      <if test="eventMethodDesc != null">
+        event_method_desc,
+      </if>
+      <if test="eventObject != null">
+        event_object,
+      </if>
+      <if test="eventObjectDesc != null">
+        event_object_desc,
+      </if>
+      <if test="logTime != null">
+        log_time,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="eventMethod != null">
+        #{eventMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="eventMethodDesc != null">
+        #{eventMethodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="eventObject != null">
+        #{eventObject,jdbcType=VARCHAR},
+      </if>
+      <if test="eventObjectDesc != null">
+        #{eventObjectDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null">
+        #{logTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=CHAR},
+      </if>
+      <if test="params != null">
+        #{params,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.imap.cloud.common.entity.system.SysLog">
+    update sys_log
+    <set>
+      <if test="eventMethod != null">
+        event_method = #{eventMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="eventMethodDesc != null">
+        event_method_desc = #{eventMethodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="eventObject != null">
+        event_object = #{eventObject,jdbcType=VARCHAR},
+      </if>
+      <if test="eventObjectDesc != null">
+        event_object_desc = #{eventObjectDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null">
+        log_time = #{logTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=CHAR},
+      </if>
+      <if test="params != null">
+        params = #{params,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.imap.cloud.common.entity.system.SysLog">
+    update sys_log
+    set event_method = #{eventMethod,jdbcType=VARCHAR},
+      event_method_desc = #{eventMethodDesc,jdbcType=VARCHAR},
+      event_object = #{eventObject,jdbcType=VARCHAR},
+      event_object_desc = #{eventObjectDesc,jdbcType=VARCHAR},
+      log_time = #{logTime,jdbcType=TIMESTAMP},
+      username = #{username,jdbcType=CHAR},
+      params = #{params,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

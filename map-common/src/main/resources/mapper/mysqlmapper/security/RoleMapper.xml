@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.security.RoleMapper">
+  
+  <resultMap id="roleResultMap" type="Role">
+    <id column="r_id" property="r_id" jdbcType="CHAR" />
+  	<result column="role_name" property="role_name" jdbcType="VARCHAR" />
+	<result column="detail" property="detail" jdbcType="VARCHAR" />
+	<!-- <result column="deleted" property="deleted" jdbcType="CHAR" /> -->
+	<result column="isEnabled" property="isEnabled" jdbcType="CHAR" />
+	<!-- role角色和权限 -->
+	<collection property="permissionSet" ofType="Permission" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap"></collection>
+  </resultMap>
+  
+  <select id="selectAll" parameterType="Role" resultMap="roleResultMap">
+   <choose>
+		<when test="detail == null or detail == ''">select * from sec_role where deleted = 0</when>
+		<otherwise>
+			select * from sec_role where deleted = 0
+		  	<if test="detail != null and detail != ''">
+		  		and detail like CONCAT('%',#{detail},'%' )
+		  	</if>
+		</otherwise>
+	</choose>
+  </select>
+  
+  <select id="selectByPk" resultMap="roleResultMap">
+  	select * from sec_role s where s.r_id = #{id} and s.deleted = 0
+  </select>
+  
+  <select id="selectNameByPk" resultType="int">
+  	select count(1) from sec_role s where s.detail = #{name,jdbcType=VARCHAR} and s.deleted=0
+  	<if test="id != null" >
+        and s.r_id != #{id,jdbcType=CHAR}
+    </if>
+  </select>
+  <select id="selectRoleNameByPk" resultType="int">
+  	select count(1) from sec_role s where s.role_name = #{roleName,jdbcType=VARCHAR} and s.deleted=0
+  	<if test="id != null" >
+        and s.r_id != #{id,jdbcType=CHAR}
+    </if>
+  </select>
+  
+  <select id="selectPkPermission" parameterType="String" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap">
+  	select * from sec_permission_role pr JOIN sec_permission p on p.p_id = pr.pid
+	where pr.rid = #{id} and p.deleted = 0
+  </select>
+  
+  <update id="deleteByPk" parameterType="String" >
+  	update sec_role s set s.deleted = 1 where s.r_id = #{id}
+  </update>
+  
+  <delete id="deleteByPkIntermediatePermission" parameterType="String" >
+    DELETE FROM sec_permission_role WHERE rid = #{id}
+  </delete>
+  
+  <delete id="deleteByPkIntermediateUser" parameterType="String" >
+    DELETE FROM sec_user_role WHERE rid = #{id}
+  </delete>
+  
+   <insert id="insertSelective" parameterType="Role">
+  	insert into sec_role(r_id,role_name,detail,deleted,isEnabled)
+  	values(#{r_id},#{role_name},#{detail},#{deleted},#{isEnabled})
+  </insert>
+  
+  <insert id="insertPermission" parameterType="map">
+  	insert into sec_permission_role(pid,rid) values
+	<foreach item="pid"  collection="pid"  separator="," >    
+         (#{pid},#{rid})
+     </foreach>    
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="Role">
+  	update sec_role set 
+  		<if test="role_name != null">role_name = #{role_name},</if>
+  		<if test="detail != null">detail = #{detail},</if>
+  		<if test="isEnabled != null">isEnabled = #{isEnabled}</if>
+  	WHERE r_id = #{r_id}
+  </update>
+  
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.map.MapRoadMapper" >
+    <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapRoad" >
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="x" property="x" jdbcType="DOUBLE" />
+        <result column="y" property="y" jdbcType="DOUBLE" />
+        <result column="path" property="path" jdbcType="LONGVARCHAR" />
+        <result column="area" property="area" jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, name, x, y, path, area
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from a_road
+        where id = #{id,jdbcType=CHAR}
+    </select>
+    
+    <select id="getList" parameterType="com.imap.cloud.common.entity.map.MapRoad" resultMap="BaseResultMap">
+    	select 
+        <include refid="Base_Column_List" />
+        from a_road
+        where 1=1 
+        	<if test="id != null" >
+                and id = #{id,jdbcType=CHAR}
+            </if>
+        	<if test="name != null" >
+                and name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+            </if>
+            <if test="x != null" >
+                and x = #{x,jdbcType=DOUBLE}
+            </if>
+            <if test="y != null" >
+                and y = #{y,jdbcType=DOUBLE}
+            </if>
+            <if test="area != null" >
+                and area = #{area,jdbcType=CHAR}
+            </if>
+    </select>
+
+    <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapRoad" >
+        insert into a_road (id, name, x, y, path, 
+            area)
+        values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, 
+            #{path,jdbcType=LONGVARCHAR}, #{area,jdbcType=CHAR})
+    </insert>
+
+    <update id="updateById" parameterType="com.imap.cloud.common.entity.map.MapRoad" >
+        update a_road
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="x != null" >
+                x = #{x,jdbcType=DOUBLE},
+            </if>
+            <if test="y != null" >
+                y = #{y,jdbcType=DOUBLE},
+            </if>
+            <if test="path != null" >
+                path = #{path,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="area != null" >
+                area = #{area,jdbcType=CHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=CHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from a_road
+        where id = #{id,jdbcType=CHAR}
+    </delete>
+    
+    <delete id="deleteByArea" parameterType="java.lang.String" >
+        delete from a_road
+        where area = #{areaId,jdbcType=CHAR}
+    </delete>
+
+</mapper>

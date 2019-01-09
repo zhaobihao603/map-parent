@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.system.SysFileMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.system.SysFile">
+    <result column="id" jdbcType="CHAR" property="id" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="file_size" jdbcType="INTEGER" property="fileSize" />
+    <result column="file_format" jdbcType="VARCHAR" property="fileFormat" />
+    <result column="module" jdbcType="VARCHAR" property="module" />
+    <result column="uploader" jdbcType="CHAR" property="uploader" />
+    <result column="upload_date" jdbcType="TIMESTAMP" property="uploadDate" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <resultMap id="BaseResultMapWithUploader" type="com.imap.cloud.common.entity.system.SysFile" extends="BaseResultMap">
+ 	<association property="upld"  column="uploader" select="getUploader">
+  	</association>
+  </resultMap>
+  <select id="getUploader" parameterType="java.lang.String" resultType="com.imap.cloud.common.entity.security.User">
+  	select * from sec_user a where a.a_id = #{a_id} and a.deleted = 0 
+  </select>
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.system.SysFile">
+    insert into sys_file (id, real_name, file_name, 
+      file_url, file_size, file_format, 
+      module, uploader, upload_date, 
+      deleted, description)
+    values (#{id,jdbcType=CHAR}, #{realName,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{fileUrl,jdbcType=VARCHAR}, #{fileSize,jdbcType=INTEGER}, #{fileFormat,jdbcType=VARCHAR}, 
+      #{module,jdbcType=VARCHAR}, #{uploader,jdbcType=CHAR}, #{uploadDate,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=BIT}, #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="save" parameterType="com.imap.cloud.common.entity.system.SysFile">
+    insert into sys_file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="realName != null">
+        real_name,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="fileUrl != null">
+        file_url,
+      </if>
+      <if test="fileSize != null">
+        file_size,
+      </if>
+      <if test="fileFormat != null">
+        file_format,
+      </if>
+      <if test="module != null">
+        module,
+      </if>
+      <if test="uploader != null">
+        uploader,
+      </if>
+      <if test="uploadDate != null">
+        upload_date,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileFormat != null">
+        #{fileFormat,jdbcType=VARCHAR},
+      </if>
+      <if test="module != null">
+        #{module,jdbcType=VARCHAR},
+      </if>
+      <if test="uploader != null">
+        #{uploader,jdbcType=CHAR},
+      </if>
+      <if test="uploadDate != null">
+        #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.imap.cloud.common.entity.system.SysFile">
+    update sys_file
+    <set>
+      <if test="realName != null">
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileUrl != null">
+        file_url = #{fileUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSize != null">
+        file_size = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="fileFormat != null">
+        file_format = #{fileFormat,jdbcType=VARCHAR},
+      </if>
+      <if test="module != null">
+        module = #{module,jdbcType=VARCHAR},
+      </if>
+      <if test="uploader != null">
+        uploader = #{uploader,jdbcType=CHAR},
+      </if>
+      <if test="uploadDate != null">
+        upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR},
+  </update>
+  <update id="updateById" parameterType="com.imap.cloud.common.entity.system.SysFile">
+    update sys_file
+    set 
+      real_name = #{realName,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      file_url = #{fileUrl,jdbcType=VARCHAR},
+      file_size = #{fileSize,jdbcType=INTEGER},
+      file_format = #{fileFormat,jdbcType=VARCHAR},
+      module = #{module,jdbcType=VARCHAR},
+      uploader = #{uploader,jdbcType=CHAR},
+      upload_date = #{uploadDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      description = #{description,jdbcType=VARCHAR}
+    where id= #{id,jdbcType=CHAR}
+  </update>
+  
+  <delete id="deleteById" parameterType="java.lang.String">
+    delete from sys_file where id= #{id,jdbcType=CHAR}
+  </delete>
+  <select id="count" resultType="java.lang.Long">
+    select count(*) from sys_file
+  </select>
+  
+  <select id="load" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from sys_file where id= #{id,jdbcType=CHAR}
+  </select>
+  
+  <select id="getByModule" parameterType="java.lang.String"  resultMap="BaseResultMapWithUploader">
+	  	select * from sys_file s where module = #{module,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="select" resultMap="BaseResultMapWithUploader">
+	select * from sys_file s 
+	  	where 1=1 
+  	<if test="module!=null and module!=''">
+  		and module = #{module,jdbcType=VARCHAR}
+  	</if>
+  	<if test="realName!=null and realName!=''">
+  		and real_name = #{realName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="fileName!=null and fileName!=''">
+  		and file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+  	</if>
+  	<if test="fileUrl!=null and fileUrl!=''">
+  		and file_url = #{fileUrl,jdbcType=VARCHAR}
+  	</if>
+  	<if test="fileSize!=null">
+  		and file_size = #{fileSize,jdbcType=INTEGER}
+  	</if>
+  	<if test="fileFormats!=null and fileFormats.size > 0">
+  		and file_format in 
+  		<foreach collection="fileFormats" item="format" index="index"
+            open="(" close=")" separator=",">
+            #{format}
+        </foreach>
+  	</if>
+  	<if test="startTime !=null and startTime!=''">
+		<![CDATA[and DATE_FORMAT(upload_date, '%Y-%m-%d %H:%i:%S')>=  DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%S')]]>
+	</if>
+	<if test="endTime !=null and endTime!=''">
+		<![CDATA[and DATE_FORMAT(upload_date, '%Y-%m-%d %H:%i:%S')<  DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%S')]]>
+	</if>
+  	<if test="deleted!=null">
+  		and deleted = #{deleted,jdbcType=BIT}
+  	</if>
+  	order by upload_date desc
+  </select>
+  
+  <!-- 循环查询上传文件 -->
+  <select id="selectByIds" resultMap="BaseResultMapWithUploader">
+    select * from sys_file s  where
+    <foreach collection="array" index="index" item="list" separator="or">  
+            s.id = #{list}   
+    </foreach>  
+  </select>
+  
+  <!-- 查询路书图片信息 -->
+  <select id="selectLushuImages" parameterType="java.lang.String" resultMap="BaseResultMap">
+  SELECT
+		s.*
+	FROM
+		sys_file s
+	LEFT JOIN connect_lushu_upload  c ON s.id = c.uploadId
+    where c.lushuid = #{id,jdbcType=CHAR} order by upload_date desc
+  </select>
+  
+  <!-- 查询景点图片信息 -->
+  <select id="selectScenicPhoto" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	  select * from sys_file a
+		LEFT JOIN connect_scenis_upload b on a.id=b.uploadId
+	  where b.scenicId=#{scenicId,jdbcType=CHAR} order by upload_date desc
+  </select>
+  
+  <!-- 查询师资图片信息 -->
+  <select id="selectTeacherPhoto" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	  select * from sys_file a
+		LEFT JOIN connect_teachers_upload b on a.id=b.uploadId
+	  where b.teachersId=#{id,jdbcType=CHAR} order by upload_date desc
+  </select>
+  
+  <!-- 查询VR信息 -->
+  <select id="selectVrFiles" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	  select * from sys_file a
+		LEFT JOIN connect_vr_upload b on a.id=b.uploadId
+	  where b.vrId=#{id,jdbcType=CHAR} order by upload_date desc
+  </select>
+  
+  <!-- 查询活动图片信息 -->
+  <select id="selectActivityPhoto" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	  select * from sys_file a
+		LEFT JOIN connect_school_upload b on a.id=b.uploadId
+	  where b.schoolId=#{schoolId,jdbcType=CHAR} order by upload_date desc
+  </select>
+  
+</mapper>

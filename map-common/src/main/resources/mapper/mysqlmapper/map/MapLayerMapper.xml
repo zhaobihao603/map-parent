@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.map.MapLayerMapper" >
+    <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapLayer" >
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="ename" property="ename" jdbcType="VARCHAR" />
+        <result column="alias" property="alias" jdbcType="VARCHAR" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="source" property="source" jdbcType="VARCHAR" />
+        <result column="layerType" property="layerType" jdbcType="VARCHAR" />
+        <result column="featureNS" property="featureNS" jdbcType="VARCHAR" />
+        <result column="featureType" property="featureType" jdbcType="VARCHAR" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+        <result column="resolution" property="resolution" jdbcType="LONGVARCHAR" />
+        <result column="projection" property="projection" jdbcType="VARCHAR" />
+        <result column="bound" property="bound" jdbcType="LONGVARCHAR" />
+        <result column="extent" property="extent" jdbcType="VARCHAR" />
+        <result column="layers" property="layers" jdbcType="VARCHAR" />
+        <result column="tilesize" property="tilesize" jdbcType="VARCHAR" />
+        <result column="tileorigin" property="tileorigin" jdbcType="VARCHAR" />
+        <result column="angle" property="angle" jdbcType="LONGVARCHAR" />
+        <result column="seq" property="seq" jdbcType="INTEGER" />
+        <result column="display" property="display" jdbcType="BIT" />
+        <result column="status" property="status" jdbcType="BIT" />
+        <result column="deleted" property="deleted" jdbcType="BIT" />
+        <result column="addDate" property="addDate" jdbcType="TIMESTAMP" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="dirId" property="dirId" jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, name, ename, alias, url, source, layerType, featureNS, featureType, version, 
+        resolution, projection, bound,extent, layers, tilesize, tileorigin, angle, seq, display, 
+        status, deleted, addDate, remark, dirId
+    </sql>
+
+    <select id="selectByPk" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from map_layer
+        where id = #{id,jdbcType=CHAR}
+    </select>
+    
+    <select id="listByDirId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from map_layer
+        where dirId = #{dirId,jdbcType=CHAR}
+        order by seq asc
+    </select>
+	<!-- 自动获取主键 -->
+    <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapLayer" >
+    	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+			select  replace(uuid(),'-','')   from dual  
+		</selectKey>
+        insert into map_layer (id, name, ename, 
+            alias, url, source, 
+            layerType, featureNS, featureType, 
+            version, resolution, projection, 
+            bound,extent, layers, tilesize, 
+            tileorigin, angle, seq, 
+            display, status, deleted, addDate, 
+            remark, dirId)
+        values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{ename,jdbcType=VARCHAR}, 
+            #{alias,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+            #{layerType,jdbcType=VARCHAR}, #{featureNS,jdbcType=VARCHAR}, #{featureType,jdbcType=VARCHAR}, 
+            #{version,jdbcType=VARCHAR}, #{resolution,jdbcType=LONGVARCHAR}, #{projection,jdbcType=VARCHAR}, 
+            #{bound,jdbcType=LONGVARCHAR},#{extent,jdbcType=VARCHAR}, #{layers,jdbcType=VARCHAR}, #{tilesize,jdbcType=VARCHAR}, 
+            #{tileorigin,jdbcType=VARCHAR}, #{angle,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER}, 
+            #{display,jdbcType=BIT}, #{status,jdbcType=BIT}, #{deleted,jdbcType=BIT}, #{addDate,jdbcType=TIMESTAMP}, 
+            #{remark,jdbcType=VARCHAR}, #{dirId,jdbcType=CHAR})
+    </insert>
+    <!-- 有默认值的，就用数据库的默认值 -->
+    <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.map.MapLayer">
+	  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+			select  replace(uuid(),'-','')   from dual  
+		</selectKey>
+	    insert into map_layer (id, name, ename, 
+            alias, url, source, 
+            layerType, featureNS, featureType, 
+            version, resolution, projection, 
+            bound,extent, layers, tilesize, 
+            tileorigin, angle, seq, 
+            <if test="display != null">display,</if>
+            <if test="status != null"> status,</if>
+            <if test="deleted != null"> deleted,</if> addDate, 
+            remark, dirId)
+        values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{ename,jdbcType=VARCHAR}, 
+            #{alias,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+            #{layerType,jdbcType=VARCHAR}, #{featureNS,jdbcType=VARCHAR}, #{featureType,jdbcType=VARCHAR}, 
+            #{version,jdbcType=VARCHAR}, #{resolution,jdbcType=LONGVARCHAR}, #{projection,jdbcType=VARCHAR}, 
+            #{bound,jdbcType=LONGVARCHAR}, #{extent,jdbcType=VARCHAR}, #{layers,jdbcType=VARCHAR}, #{tilesize,jdbcType=VARCHAR}, 
+            #{tileorigin,jdbcType=VARCHAR}, #{angle,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER}, 
+              <if test="display != null">
+		        #{display,jdbcType=BIT},
+		      </if>
+		      <if test="status != null">
+		        #{status,jdbcType=BIT},
+		      </if>
+		      <if test="deleted != null">
+		        #{deleted,jdbcType=BIT},
+		      </if> #{addDate,jdbcType=TIMESTAMP}, 
+            #{remark,jdbcType=VARCHAR}, #{dirId,jdbcType=CHAR})
+	 </insert>
+
+    <update id="updateByPkSelective" parameterType="com.imap.cloud.common.entity.map.MapLayer" >
+        update map_layer
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="ename != null" >
+                ename = #{ename,jdbcType=VARCHAR},
+            </if>
+            <if test="alias != null" >
+                alias = #{alias,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null" >
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="source != null" >
+                source = #{source,jdbcType=VARCHAR},
+            </if>
+            <if test="layerType != null" >
+                layerType = #{layerType,jdbcType=VARCHAR},
+            </if>
+            <if test="featureNS != null" >
+                featureNS = #{featureNS,jdbcType=VARCHAR},
+            </if>
+            <if test="featureType != null" >
+                featureType = #{featureType,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null" >
+                version = #{version,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null" >
+                resolution = #{resolution,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="projection != null" >
+                projection = #{projection,jdbcType=VARCHAR},
+            </if>
+            <if test="bound != null" >
+                bound = #{bound,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="extent != null" >
+                extent = #{extent,jdbcType=VARCHAR},
+            </if>
+            <if test="layers != null" >
+                layers = #{layers,jdbcType=VARCHAR},
+            </if>
+            <if test="tilesize != null" >
+                tilesize = #{tilesize,jdbcType=VARCHAR},
+            </if>
+            <if test="tileorigin != null" >
+                tileorigin = #{tileorigin,jdbcType=VARCHAR},
+            </if>
+            <if test="angle != null" >
+                angle = #{angle,jdbcType=VARCHAR},
+            </if>
+            <if test="seq != null" >
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="display != null" >
+                display = #{display,jdbcType=BIT},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=BIT},
+            </if>
+            <if test="addDate != null" >
+                addDate = #{addDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="dirId != null" >
+                dirId = #{dirId,jdbcType=CHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=CHAR}
+    </update>
+	
+	<update id="updateByPk" parameterType="com.imap.cloud.common.entity.map.MapLayer">
+    update map_layer
+    set name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      layerType = #{layerType,jdbcType=VARCHAR},
+      featureNS = #{featureNS,jdbcType=VARCHAR},
+      featureType = #{featureType,jdbcType=VARCHAR},
+      version = #{version,jdbcType=VARCHAR},
+      projection = #{projection,jdbcType=VARCHAR},
+      layers = #{layers,jdbcType=VARCHAR},
+      extent = #{extent,jdbcType=VARCHAR},
+      tilesize = #{tilesize,jdbcType=VARCHAR},
+      tileorigin = #{tileorigin,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=INTEGER},
+      display = #{display,jdbcType=BIT},
+      status = #{status,jdbcType=BIT},
+      deleted = #{deleted,jdbcType=BIT},
+      addDate = #{addDate,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      dirId = #{dirId,jdbcType=CHAR},
+      resolution = #{resolution,jdbcType=LONGVARCHAR},
+      bound = #{bound,jdbcType=LONGVARCHAR},
+      angle = #{angle,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+  <select id="selectAll" parameterType="com.imap.cloud.common.entity.map.MapLayer" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from map_layer where 1=1 
+			<if test="name != null">
+		      and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="layerType != null">
+		      and layerType = #{layerType,jdbcType=VARCHAR}
+			</if>
+			<if test="seq != null">
+		      and seq = #{seq,jdbcType=INTEGER}
+			</if>
+			<if test="display != null">
+		      and display = #{display,jdbcType=BIT}
+		    </if>
+		    <if test="status != null">
+		      and status = #{status,jdbcType=BIT}
+		    </if>
+		    <if test="deleted != null">
+		      and deleted = #{deleted,jdbcType=BIT}
+		    </if>
+		    <if test="dirId != null">
+		      and dirId = #{dirId,jdbcType=CHAR}
+		    </if>
+		    <if test="angle != null">
+		      and angle = #{angle,jdbcType=VARCHAR}
+		    </if>
+		 order by seq asc
+	</select>
+	
+	<select id="count" parameterType="com.imap.cloud.common.entity.map.MapLayer" resultType="int">
+		select 
+        count(*)
+        from map_layer where 1=1 
+			<if test="name != null" > and
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="ename != null" > and
+                ename = #{ename,jdbcType=VARCHAR}
+            </if>
+            <if test="layerType != null">
+		      and layerType = #{layerType,jdbcType=VARCHAR}
+			</if>
+            <if test="alias != null" > and
+                alias = #{alias,jdbcType=VARCHAR}
+            </if>
+            <if test="url != null" > and
+                url = #{url,jdbcType=VARCHAR}
+            </if>
+            <if test="source != null" > and
+                source = #{source,jdbcType=VARCHAR}
+            </if>
+            <if test="layerType != null" > and
+                layerType = #{layerType,jdbcType=VARCHAR}
+            </if>
+            <if test="featureNS != null" > and
+                featureNS = #{featureNS,jdbcType=VARCHAR}
+            </if>
+            <if test="featureType != null" > and
+                featureType = #{featureType,jdbcType=VARCHAR}
+            </if>
+            <if test="version != null" > and
+                version = #{version,jdbcType=VARCHAR}
+            </if>
+            <if test="resolution != null" > and
+                resolution = #{resolution,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="projection != null" > and
+                projection = #{projection,jdbcType=VARCHAR}
+            </if>
+            <if test="bound != null" > and
+                bound = #{bound,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="extent != null" > and
+                extent = #{extent,jdbcType=VARCHAR}
+            </if>
+            <if test="layers != null" > and
+                layers = #{layers,jdbcType=VARCHAR}
+            </if>
+            <if test="tilesize != null" > and
+                tilesize = #{tilesize,jdbcType=VARCHAR}
+            </if>
+            <if test="tileorigin != null" > and
+                tileorigin = #{tileorigin,jdbcType=VARCHAR}
+            </if>
+            <if test="angle != null" > and
+                angle = #{angle,jdbcType=VARCHAR}
+            </if>
+            <if test="seq != null" > and
+                seq = #{seq,jdbcType=INTEGER}
+            </if>
+            <if test="display != null" > and
+                display = #{display,jdbcType=BIT}
+            </if>
+            <if test="status != null" > and
+                status = #{status,jdbcType=BIT}
+            </if>
+            <if test="deleted != null" > and
+                deleted = #{deleted,jdbcType=BIT}
+            </if>
+            <if test="addDate != null" > and
+                addDate = #{addDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="remark != null" > and
+                remark = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="dirId != null" > and
+                dirId = #{dirId,jdbcType=CHAR}
+            </if>
+	</select>
+
+    <delete id="deleteByPk" parameterType="java.lang.String" >
+        delete from map_layer
+        where id = #{id,jdbcType=CHAR}
+    </delete>
+    
+    <select id="getBy" parameterType="com.imap.cloud.common.entity.map.MapLayer" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from map_layer where 1=1 
+			<if test="name != null">
+		      and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="layerType != null">
+		      and layerType = #{layerType,jdbcType=VARCHAR}
+			</if>
+			<if test="seq != null">
+		      and seq = #{seq,jdbcType=INTEGER}
+			</if>
+			<if test="alias != null">
+		      and alias = #{alias,jdbcType=VARCHAR}
+		    </if>
+			<if test="display != null">
+		      and display = #{display,jdbcType=BIT}
+		    </if>
+		    <if test="status != null">
+		      and status = #{status,jdbcType=BIT}
+		    </if>
+		    <if test="deleted != null">
+		      and deleted = #{deleted,jdbcType=BIT}
+		    </if>
+		    <if test="dirId != null">
+		      and dirId = #{dirId,jdbcType=CHAR}
+		    </if>
+		    <if test="angle != null">
+		      and angle = #{angle,jdbcType=VARCHAR}
+		    </if>
+		 order by seq asc
+	</select>
+
+</mapper>

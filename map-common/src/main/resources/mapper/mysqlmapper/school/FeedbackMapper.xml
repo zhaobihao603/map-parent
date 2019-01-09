@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.school.FeedbackMapper">
+	
+  <resultMap type="Feedback" id="FeedbackResultMap">
+  	<id column="id" property="id" jdbcType="CHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="createDate" property="createDate" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="imageUrl" property="imageUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectAll" parameterType="Feedback" resultMap="FeedbackResultMap">
+  	select * from map_feedback f 
+  	<where>
+  		<if test="type != null and type != ''">
+  		f.type = #{type} 
+  		</if>
+  	</where>
+  	ORDER BY f.createDate desc
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="FeedbackResultMap">
+  	select f.* from map_feedback f LEFT JOIN common_datadir_subitem c on f.type = c.code
+	where f.id = #{id,jdbcType=CHAR}
+  </select>
+  
+  <insert id="insertSelective" parameterType="Feedback">
+  	INSERT INTO map_feedback(id,title,type,createDate,content,imageUrl) 
+  	VALUE(#{id},#{title},#{type},#{createDate},#{content},#{imageUrl})
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="Feedback">
+  	update map_feedback
+  	<set>
+  		<if test="title != null and title != '' ">#{title},</if>
+  		<if test="type != null and type != '' ">#{type},</if>
+  		<if test="content != null and content != '' ">#{content},</if>
+  		<if test="imageUrl != null and imageUrl != '' ">#{imageUrl},</if>
+  	</set>
+  	where id = #{id}
+  </update>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from map_feedback where id = #{id}
+  </delete>
+  
+</mapper>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.security.UserMapper">
+  
+  <resultMap id="userResultMap" type="User">
+  	<id column="a_id" property="id" jdbcType="CHAR" />
+  	<result column="login" property="login" jdbcType="VARCHAR" />
+  	<result column="name" property="name" jdbcType="VARCHAR" />
+  	<result column="password" property="password" jdbcType="VARCHAR" />          
+    <result column="mail" property="mail" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+  	<!-- <result column="deleted" property="deleted" jdbcType="CHAR" /> -->
+  	<result column="description" property="description" jdbcType="VARCHAR" />
+  	<result column="isAccountNonExpired" property="isAccountNonExpired" jdbcType="CHAR" />
+  	<result column="isAccountNonLocked" property="isAccountNonLocked" jdbcType="CHAR" />
+  	<result column="isCredentialsNonExpired" property="isCredentialsNonExpired" jdbcType="CHAR" />
+  	<result column="isEnabled" property="isEnabled" jdbcType="CHAR" />
+  	
+  	<!-- user表和机构表多对多配置 -->
+  	<collection property="organizationalSet" ofType="Organizational" resultMap="com.imap.cloud.common.dao.security.OrganizationalMapper.organizationalResultMap"/>
+  	<!-- user表和role表多对多配置 -->
+  	<collection property="roleSet" ofType="Role" resultMap="com.imap.cloud.common.dao.security.RoleMapper.roleResultMap"/>
+ 	<!-- user表和permission表多对多配置 -->
+	<collection property="permissionSet" ofType="Permission" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap" />
+  </resultMap>
+  
+  <select id="selectByPk" parameterType="String" resultMap="userResultMap">
+  	<!-- select * from sec_user a join sec_user_role ar on a.a_id = ar.aid join sec_role r on ar.rid = r.r_id 
+	where a.login = #{login} and a.deleted = 0  -->
+	select * from sec_user a where a.login = #{login} and a.deleted = 0 
+  </select>
+  
+  <select id="selectByPkPermission" parameterType="String" resultMap="com.imap.cloud.common.dao.security.PermissionMapper.permissionResultMap">
+	<!-- select * from sec_permission_user pu join sec_permission p on p.p_id = pu.pid 
+	where pu.uid = #{id} and p.deleted = 0 -->
+	select * from sec_user u join sec_permission_user pu on u.a_id = pu.uid
+	join sec_permission p on p.p_id = pu.pid 
+	where u.a_id = #{id} and p.deleted = 0
+  </select>
+  
+  <select id="selectByPkRole" parameterType="String" resultMap="com.imap.cloud.common.dao.security.RoleMapper.roleResultMap">
+	<!-- select * from sec_user_role ar join sec_role r on ar.rid = r.r_id 
+	where ar.aid = #{id} and r.deleted = 0 -->
+	select * from sec_user u join  sec_user_role ar on u.a_id = ar.aid
+	join sec_role r on ar.rid = r.r_id 
+	where u.a_id = #{id} and r.deleted = 0
+  </select>
+  
+  <select id="selectPkRolePermission" resultType="java.util.HashMap">
+  	select * from sec_role r join sec_permission_role p on r.r_id = p.rid 
+  	where r.r_id in 
+  	<foreach collection="list" item="list" open="(" close=")" separator="," >
+		 #{list}
+	</foreach>
+	and r.deleted = 0 and r.isEnabled = 0
+  </select>
+  
+  <select id="selectPKOrganizational" parameterType="String" resultMap="com.imap.cloud.common.dao.security.OrganizationalMapper.organizationalResultMap">
+  	select o.* from sec_user u join sec_organizational_user ou on u.a_id = ou.uid
+	join sec_organizational o on o.id = ou.oid where u.deleted = 0 and u.a_id = #{id}
+  </select>
+  
+  <select id="findAll" resultMap="userResultMap">
+  	select * from sec_user where deleted = 0
+  </select>
+  
+  <!-- description 临时使用，用于封装页面机构下拉查询数据 -->
+  <select id="selectAll" parameterType="User" resultMap="userResultMap">
+  	<choose>
+		<when test="description == null or description == ''">
+			select * from sec_user where deleted = 0 
+		  	<if test="name != null and name != ''">
+		  		and name like CONCAT('%',#{name},'%' )
+		  	</if>
+		</when>
+		<otherwise>
+			select * from sec_user u join sec_organizational_user ou on u.a_id = ou.uid
+			join sec_organizational o on o.id = ou.oid where u.deleted = 0 
+			<if test="description != null and description != '' ">
+				and o.id = #{description}
+			</if>
+		  	<if test="name != null and name != ''">
+		  		and name like CONCAT('%',#{name},'%' )
+		  	</if>
+		</otherwise>
+	</choose>
+  </select>
+   
+   <select id="findAllUser" resultMap="userResultMap">
+   	select * from sec_user u 
+	where u.deleted = 0 and u.a_id != #{adminID}
+	and u.a_id not in 
+	(
+	select u_.a_id from sec_user u_ 
+	join sec_organizational_user ou on u_.a_id = ou.uid 
+	join sec_organizational o on o.id = ou.oid 
+	where o.id = #{id} and u_.deleted = 0
+	)
+   </select>
+   
+   <select id="selectByPkLogin" parameterType="String" resultType="int">
+   	 <![CDATA[ select count(a_id) from sec_user where login=#{login} ]]> 
+   </select>
+   
+  <update id="deleteByPk" parameterType="String" >
+  	update sec_user s set s.deleted = 1 where s.a_id = #{id}
+  </update>
+  
+  <delete id="deletepkRole" parameterType="String">
+  	delete from sec_user_role where aid = #{id}
+  </delete>
+  
+  <delete id="deletepkPersonalPermission" parameterType="String">
+   delete from sec_permission_user where uid = #{id}
+  </delete>
+  
+  <select id="deletepkOrganizational" parameterType="String">
+  	delete from sec_organizational_user where uid = #{id}
+  </select>
+  
+  <insert id="insertSelective" parameterType="User">
+  	insert into sec_user(a_id,login,name,password,mail,mobile,deleted,description,isAccountNonExpired,isAccountNonLocked,isCredentialsNonExpired,isEnabled)
+  	values(#{id},#{login},#{name},#{password},#{mail},#{mobile},#{deleted},#{description},#{isAccountNonExpired},#{isAccountNonLocked},#{isCredentialsNonExpired},#{isEnabled})
+  </insert>
+  
+  <insert id="insertPkRole" parameterType="map" useGeneratedKeys="false">
+  	<!-- insert into sec_user_role(aid,rid) values
+  	<foreach collection="rid" item="rid" separator="," >
+		 (#{aid},#{rid})
+	</foreach> -->
+	insert into sec_user_role(aid,rid)
+  	<foreach collection="rid" item="rid" separator="union all" >
+		 select #{aid},#{rid} from dual 
+	</foreach>
+  </insert>
+  
+  <insert id="insertPersonalPermission" parameterType="map" useGeneratedKeys="false">
+  	<!-- insert into sec_permission_user(uid,pid) values
+  	<foreach collection="pid" item="pid" separator="," >
+		 (#{uid},#{pid})
+	</foreach> -->
+	insert into sec_permission_user(uid,pid) 
+  	<foreach collection="pid" item="pid" separator="union all" >
+		 select #{uid},#{pid} from dual 
+	</foreach>
+  </insert>
+  
+  <insert id="insertOrganization" parameterType="map" useGeneratedKeys="false">
+  	<!-- insert into sec_organizational_user(uid,oid) values
+  	<foreach collection="oid" item="oid" separator="," >
+		 (#{uid},#{oid})
+	</foreach> -->
+	insert into sec_organizational_user(uid,oid) 
+  	<foreach collection="oid" item="oid" separator="union all" >
+		 select #{uid},#{oid} from dual
+	</foreach>
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="User">
+  	update sec_user 
+  	<set>
+  	<if test="login != null and login != ''">login = #{login},</if>
+  	<if test="name != null and name != ''">name = #{name},</if>
+  	<if test="password != null and password != ''">password = #{password},</if>
+  	<if test="mail != null and mail != ''">mail = #{mail},</if>
+  	<if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+  	<if test="description != null and description != ''">description = #{description},</if>
+  	</set> 
+  	where a_id = #{id}
+  </update>
+  
+</mapper>

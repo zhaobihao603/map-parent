@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.lushu.LushuMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.lushu.Lushu">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="createdTime" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="endPoint" jdbcType="VARCHAR" property="endPoint" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="luShu_id" jdbcType="CHAR" property="luShu_id" />
+    <result column="imageUrl" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="area" jdbcType="CHAR" property="area" />
+    <result column="fabu" jdbcType="BIT" property="fabu" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="audited" jdbcType="BIT" property="audited" />
+    <result column="xs" jdbcType="LONGVARCHAR" property="xs" />
+    <result column="ys" jdbcType="LONGVARCHAR" property="ys" />
+  </resultMap>
+  <resultMap id="BaseResultMapWithOrg" type="com.imap.cloud.common.entity.lushu.Lushu" extends="BaseResultMap">
+        <collection property="UploadRecordList" column="id"
+        select="com.imap.cloud.common.dao.system.SysFileMapper.selectLushuImages"></collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, createdTime, deleted, endPoint, name,ename, updatedTime, x, y, description, luShu_id, 
+    imageUrl, startTime, area, fabu, username, audited, xs, ys
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMapWithOrg">
+    SELECT
+		m.*
+	FROM
+		map_school_lushu m
+    where m.id = #{id,jdbcType=CHAR}
+  </select>
+  
+  <!-- 建立路书服务与上传连接关联 -->
+    <insert id="linkLushuUpload">
+    insert into connect_lushu_upload (lushuid, uploadid)
+    values (#{lushuid,jdbcType=CHAR}, #{uploadid,jdbcType=CHAR})
+	</insert>
+  
+    <!-- 修改与上传连接关联 -->
+  	<update id="updatelushuUpload" >
+  	update connect_lushu_upload
+	set
+	 uploadid=#{uploadid,jdbcType=CHAR}
+	where lushuid=#{lushuid,jdbcType=CHAR}
+  	</update>
+  
+    <!-- 删除与路书服务与上传连接关联 -->
+  <delete id="deleteLushuUpload">
+    delete from connect_lushu_upload where lushuid=#{lushuid,jdbcType=CHAR}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from map_school_lushu
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.lushu.Lushu">
+    insert into map_school_lushu (id,createdTime, deleted, 
+      endPoint, name,ename, updatedTime, 
+      x, y, description, 
+      luShu_id, imageUrl, startTime, 
+      area, fabu, username, audited, 
+       xs, ys
+      )
+    values (#{id,jdbcType=CHAR},#{createdTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
+      #{endPoint,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{ename,jdbcType=VARCHAR}, #{updatedTime,jdbcType=TIMESTAMP}, 
+      #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR}, 
+      #{luShu_id,jdbcType=CHAR}, #{imageUrl,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{area,jdbcType=CHAR}, #{fabu,jdbcType=BIT}, #{username,jdbcType=VARCHAR}, #{audited,jdbcType=BIT}, 
+      #{xs,jdbcType=LONGVARCHAR}, #{ys,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.imap.cloud.common.entity.lushu.Lushu">
+    update map_school_lushu
+    <set>
+      <if test="createdTime != null">
+        createdTime = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="endPoint != null">
+        endPoint = #{endPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedTime != null">
+        updatedTime = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="luShu_id != null">
+        luShu_id = #{luShu_id,jdbcType=CHAR},
+      </if>
+      <if test="imageUrl != null">
+        imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+      <if test="fabu != null">
+        fabu = #{fabu,jdbcType=BIT},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="audited != null">
+        audited = #{audited,jdbcType=BIT},
+      </if>
+      <if test="xs != null">
+        xs = #{xs,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ys != null">
+        ys = #{ys,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.imap.cloud.common.entity.lushu.Lushu">
+    update map_school_lushu
+    set createdTime = #{createdTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      endPoint = #{endPoint,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      updatedTime = #{updatedTime,jdbcType=TIMESTAMP},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      description = #{description,jdbcType=VARCHAR},
+      luShu_id = #{luShu_id,jdbcType=CHAR},
+      imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      area = #{area,jdbcType=CHAR},
+      fabu = #{fabu,jdbcType=BIT},
+      username = #{username,jdbcType=VARCHAR},
+      audited = #{audited,jdbcType=BIT},
+      xs = #{xs,jdbcType=LONGVARCHAR},
+      ys = #{ys,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.imap.cloud.common.entity.lushu.Lushu">
+    update map_school_lushu
+    set createdTime = #{createdTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      endPoint = #{endPoint,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      updatedTime = #{updatedTime,jdbcType=TIMESTAMP},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      description = #{description,jdbcType=VARCHAR},
+      luShu_id = #{luShu_id,jdbcType=CHAR},
+      imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      area = #{area,jdbcType=CHAR},
+      fabu = #{fabu,jdbcType=BIT},
+      username = #{username,jdbcType=VARCHAR},
+      audited = #{audited,jdbcType=BIT}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+    <!-- 查询所有信息 -->
+  <select id="selectAll" resultMap="BaseResultMapWithOrg" parameterType="com.imap.cloud.common.entity.lushu.Lushu">
+	SELECT
+		m.*
+	FROM
+		map_school_lushu m
+	 where 1=1
+    <if test ="name!=null">
+		and (m.name like CONCAT('%',#{name},'%')
+			or m.ename like CONCAT('%',#{name},'%'))
+	</if> 
+    <if test="area!=null">
+    	and m.area=#{area}
+   </if>
+   <if test="fabu!=null">
+    	and m.fabu=#{fabu}
+   </if>
+   order by m.fabu desc, m.startTime desc
+  </select>
+  
+  <!-- 发布活动 -->
+  <update id="updateByfabu" >
+  	update map_school_lushu 
+	set fabu = #{fabu}
+	where id = #{id}
+  </update>
+
+	<delete id="deleteLushuPathsByLushuId">
+		delete from map_school_lushupath where lushuId=#{lushuid,jdbcType=CHAR}
+	</delete>
+</mapper>

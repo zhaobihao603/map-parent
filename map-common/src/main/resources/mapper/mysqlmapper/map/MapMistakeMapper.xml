@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.map.MapMistakeMapper">
+  
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapMistake">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="createTime" jdbcType="VARCHAR" property="createTime" />
+    <result column="imageUrl" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="area" jdbcType="CHAR" property="area" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, x, y, content, createTime, imageUrl, state, type, area
+  </sql>
+  
+  <select id="selectAll" parameterType="MapMistake" resultMap="BaseResultMap">
+  		select 
+  		<include refid="Base_Column_List" />
+  		from map_mistake
+  		<where>
+  			<if test="state != null and state != ''">
+			  and state = #{state}
+			</if>
+		    <if test="area != null">
+		      and area = #{area,jdbcType=CHAR}
+		    </if>
+  			<if test="content != null and content != '' ">
+		      and content like CONCAT('%',#{content},'%')
+			</if>
+  		</where>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from map_mistake
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  
+  <select id="selectFindAll" resultMap="BaseResultMap">
+   <![CDATA[
+  	select * from map_mistake m where m.state <> "JC_SUCCESS"
+  	]]>
+  </select>
+  
+  <delete id="deleteByPk" parameterType="String">
+    delete from map_mistake where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.map.MapMistake">
+    insert into map_mistake
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="x != null">
+        x,
+      </if>
+      <if test="y != null">
+        y,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="imageUrl != null">
+        imageUrl,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="area != null">
+        area
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="x != null">
+        #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=CHAR}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="com.imap.cloud.common.entity.map.MapMistake">
+    update map_mistake
+    <set>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="imageUrl != null">
+        imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  
+</mapper>

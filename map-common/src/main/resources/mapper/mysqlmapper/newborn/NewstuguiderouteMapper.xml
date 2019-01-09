@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.newborn.NewstuguiderouteMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="college_id" jdbcType="VARCHAR" property="college_id" />
+    <result column="guide_date" jdbcType="TIMESTAMP" property="guide_date" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="audited" jdbcType="BIT" property="audited" />
+    <result column="fabu" jdbcType="BIT" property="fabu" />
+    <result column="fabuState" jdbcType="INTEGER" property="fabuState" />
+    <result column="busLine" jdbcType="VARCHAR" property="busLine" />
+    <result column="datum" jdbcType="VARCHAR" property="datum" />
+    <result column="reportingTime" jdbcType="VARCHAR" property="reportingTime" />
+    <result column="publicServiceId" jdbcType="VARCHAR" property="publicServiceId" />
+    <result column="yktId" jdbcType="VARCHAR" property="yktId" />
+    <result column="trafficBusId" jdbcType="VARCHAR" property="trafficBusId" />
+    <result column="guideline" jdbcType="LONGVARCHAR" property="guideline" />
+    <result column="area" jdbcType="CHAR" property="area" />
+  </resultMap>
+   <resultMap id="BaseResultMapWithOrg" type="com.imap.cloud.common.entity.newborn.Newstuguidesite" extends="BaseResultMap">
+        <collection property="list" resultMap="com.imap.cloud.common.dao.newborn.NewstuguidesiteMapper.BaseResultMap"></collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, college_id, guide_date, name, audited, fabu, fabuState, busLine, datum, reportingTime, 
+    publicServiceId, yktId, trafficBusId,  guideline,area
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+   	SELECT
+		d.*
+	FROM
+		map_newstuguide_route d
+    where d.id = #{id,jdbcType=CHAR}
+  </select>
+	
+  <!-- 以下resultMap只用于封装前端新生指引详情数据查询 -->
+  <resultMap type="UnitDto" id="UnitLabelResultDtoMap">
+  	<id column="uid" property="id" jdbcType="VARCHAR" />
+	<result column="uName" property="name" jdbcType="VARCHAR" />
+	<collection property="routeList" ofType="Newstuguideroute" resultMap="com.imap.cloud.common.dao.newborn.NewstuguiderouteMapper.UnitLabelResultDtoRouteMap"></collection>
+  </resultMap>
+  <resultMap type="Newstuguideroute" id="UnitLabelResultDtoRouteMap">
+  	<id column="id" jdbcType="CHAR" property="id" />
+  	<result column="name" jdbcType="VARCHAR" property="name" />
+  	<result column="busLine" jdbcType="VARCHAR" property="busLine" />
+    <result column="datum" jdbcType="VARCHAR" property="datum" />
+    <result column="reportingTime" jdbcType="VARCHAR" property="reportingTime" />
+    <result column="publicServiceId" jdbcType="VARCHAR" property="publicServiceId" />
+    <result column="yktId" jdbcType="VARCHAR" property="yktId" />
+    <result column="trafficBusId" jdbcType="VARCHAR" property="trafficBusId" />
+    <result column="guideline" jdbcType="LONGVARCHAR" property="guideline" />
+	<collection property="listTemporaryNode" resultMap="com.imap.cloud.common.dao.newborn.NewstuguiderouteMapper.UnitLabelResultDtoTemporaryNodeMap"></collection>
+    <collection property="list" resultMap="com.imap.cloud.common.dao.newborn.NewstuguiderouteMapper.UnitLabelResultDtoSiteMap"></collection>
+  </resultMap>
+  <resultMap type="Newstuguidesite" id="UnitLabelResultDtoSiteMap">
+    <result property="name" column="siteName" jdbcType="VARCHAR"/>
+    <result property="x" column="sitex" jdbcType="DOUBLE"/>
+    <result property="y" column="sitey" jdbcType="DOUBLE"/>
+  </resultMap>
+  <resultMap type="TemporaryNodeDto" id="UnitLabelResultDtoTemporaryNodeMap">
+ 	<id property="id" column="tid" jdbcType="VARCHAR"/>
+    <result property="name" column="publicService" jdbcType="VARCHAR"/>
+    <result property="x" column="x" jdbcType="DOUBLE"/>
+    <result property="y" column="y" jdbcType="DOUBLE"/>
+    <result property="xs" column="xs" jdbcType="VARCHAR"/>
+    <result property="ys" column="ys" jdbcType="VARCHAR"/>
+    <result property="layerId" column="layerId" jdbcType="CHAR"/>
+    <result property="color" column="color" jdbcType="VARCHAR"/>
+    <result property="lineweight" column="lineweight" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <!-- 查询单个新生关联单位详情 -->
+  <select id="selectNew" parameterType="String" resultMap="UnitLabelResultDtoMap">
+	select * from 
+	(	
+		select 
+			a.uName,a.uid,a.name,a.id,a.busLine,a.datum,a.reportingTime,a.guideline,
+			a.publicService,a.x,a.y,a.xs,a.ys,a.tid,a.layerId,a.color,a.lineweight,
+			site.x sitex,site.y sitey,site.name siteName,
+			a.publicServiceId,a.trafficBusId,a.yktId
+			from 
+		(
+			SELECT route.uName,route.uid,route.name,route.id,route.busLine,route.datum,route.reportingTime,route.guideline,
+				item.name publicService,item.x,item.y,item.xs,item.ys,item.id tid,item.layerId,item.color,item.lineweight,
+				route.publicServiceId,route.trafficBusId,route.yktId
+			from 
+			(select unit.name uName,unit.id uid,route.name,route.id,route.publicServiceId,route.trafficBusId,route.yktId,
+				route.busLine,route.datum,route.reportingTime,route.guideline
+				from map_unit_label unit LEFT JOIN map_newstuguide_route route on 
+				unit.id = route.college_id where route.fabu = 1 and unit.id = #{id}
+			) route LEFT JOIN map_layer_item item on 
+			(item.id = route.publicServiceId or item.id = route.trafficBusId or item.id = route.yktId)
+			where item.deleted = 0
+		) a	LEFT JOIN map_newstuguide_site site on site.route_id = a.id
+	) a
+  </select>
+  
+  
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+	SELECT
+		d.*
+	FROM
+		map_newstuguide_route d
+	WHERE 1=1
+   	<if test ="college_id !=null">
+		and d.college_id = #{college_id,jdbcType=INTEGER}
+   </if>  
+   <if test ="area !=null">
+		and d.area = #{area}
+   </if>
+   <if test ="fabu !=null">
+		and d.fabu = #{fabu}
+   </if>
+   order by d.fabu desc
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from map_newstuguide_route
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_newstuguide_route (id, college_id, guide_date, 
+      name, audited, fabu, fabuState, 
+      busLine, datum, reportingTime, 
+      publicServiceId, yktId, trafficBusId, 
+      guideline,area)
+    values (#{id,jdbcType=CHAR}, #{college_id,jdbcType=VARCHAR}, #{guide_date,jdbcType=TIMESTAMP}, 
+      #{name,jdbcType=VARCHAR}, #{audited,jdbcType=BIT}, #{fabu,jdbcType=BIT}, #{fabuState,jdbcType=INTEGER}, 
+      #{busLine,jdbcType=VARCHAR}, #{datum,jdbcType=VARCHAR}, #{reportingTime,jdbcType=VARCHAR}, 
+      #{publicServiceId,jdbcType=VARCHAR}, #{yktId,jdbcType=VARCHAR}, #{trafficBusId,jdbcType=VARCHAR}, 
+      #{guideline,jdbcType=LONGVARCHAR},#{area,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+        select  replace(uuid(),'-','')   from dual  
+    </selectKey>
+    insert into map_newstuguide_route
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="college_id != null">
+        college_id,
+      </if>
+      <if test="guide_date != null">
+        guide_date,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="audited != null">
+        audited,
+      </if>
+      <if test="fabu != null">
+        fabu,
+      </if>
+      <if test="fabuState != null">
+        fabuState,
+      </if>
+      <if test="busLine != null">
+        busLine,
+      </if>
+      <if test="datum != null">
+        datum,
+      </if>
+      <if test="reportingTime != null">
+        reportingTime,
+      </if>
+      <if test="publicServiceId != null">
+        publicServiceId,
+      </if>
+      <if test="yktId != null">
+        yktId,
+      </if>
+      <if test="trafficBusId != null">
+        trafficBusId,
+      </if>
+      <if test="guideline != null">
+        guideline,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="college_id != null">
+        #{college_id,jdbcType=VARCHAR},
+      </if>
+      <if test="guide_date != null">
+        #{guide_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="audited != null">
+        #{audited,jdbcType=BIT},
+      </if>
+      <if test="fabu != null">
+        #{fabu,jdbcType=BIT},
+      </if>
+      <if test="fabuState != null">
+        #{fabuState,jdbcType=INTEGER},
+      </if>
+      <if test="busLine != null">
+        #{busLine,jdbcType=VARCHAR},
+      </if>
+      <if test="datum != null">
+        #{datum,jdbcType=VARCHAR},
+      </if>
+      <if test="reportingTime != null">
+        #{reportingTime,jdbcType=VARCHAR},
+      </if>
+      <if test="publicServiceId != null">
+        #{publicServiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="yktId != null">
+        #{yktId,jdbcType=VARCHAR},
+      </if>
+      <if test="trafficBusId != null">
+        #{trafficBusId,jdbcType=VARCHAR},
+      </if>
+      <if test="guideline != null">
+        #{guideline,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="area != null">
+        #{area,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+    update map_newstuguide_route
+    <set>
+      <if test="college_id != null">
+        college_id = #{college_id,jdbcType=VARCHAR},
+      </if>
+      <if test="guide_date != null">
+        guide_date = #{guide_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="audited != null">
+        audited = #{audited,jdbcType=BIT},
+      </if>
+      <if test="fabu != null">
+        fabu = #{fabu,jdbcType=BIT},
+      </if>
+      <if test="fabuState != null">
+        fabuState = #{fabuState,jdbcType=INTEGER},
+      </if>
+      <if test="busLine != null">
+        busLine = #{busLine,jdbcType=VARCHAR},
+      </if>
+      <if test="datum != null">
+        datum = #{datum,jdbcType=VARCHAR},
+      </if>
+      <if test="reportingTime != null">
+        reportingTime = #{reportingTime,jdbcType=VARCHAR},
+      </if>
+      <if test="publicServiceId != null">
+        publicServiceId = #{publicServiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="yktId != null">
+        yktId = #{yktId,jdbcType=VARCHAR},
+      </if>
+      <if test="trafficBusId != null">
+        trafficBusId = #{trafficBusId,jdbcType=VARCHAR},
+      </if>
+      <if test="guideline != null">
+        guideline = #{guideline,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+    update map_newstuguide_route
+    set college_id = #{college_id,jdbcType=VARCHAR},
+      guide_date = #{guide_date,jdbcType=TIMESTAMP},
+      name = #{name,jdbcType=VARCHAR},
+      audited = #{audited,jdbcType=BIT},
+      fabu = #{fabu,jdbcType=BIT},
+      fabuState = #{fabuState,jdbcType=INTEGER},
+      busLine = #{busLine,jdbcType=VARCHAR},
+      datum = #{datum,jdbcType=VARCHAR},
+      reportingTime = #{reportingTime,jdbcType=VARCHAR},
+      publicServiceId = #{publicServiceId,jdbcType=VARCHAR},
+      yktId = #{yktId,jdbcType=VARCHAR},
+      trafficBusId = #{trafficBusId,jdbcType=VARCHAR},
+      guideline = #{guideline,jdbcType=LONGVARCHAR},
+      area = #{area,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.imap.cloud.common.entity.newborn.Newstuguideroute">
+    update map_newstuguide_route
+    set college_id = #{college_id,jdbcType=VARCHAR},
+      guide_date = #{guide_date,jdbcType=TIMESTAMP},
+      guideline = #{guideline,jdbcType=LONGVARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      audited = #{audited,jdbcType=BIT},
+      fabu = #{fabu,jdbcType=BIT},
+      fabuState = #{fabuState,jdbcType=INTEGER},
+      busLine = #{busLine,jdbcType=VARCHAR},
+      datum = #{datum,jdbcType=VARCHAR},
+      reportingTime = #{reportingTime,jdbcType=VARCHAR},
+      publicServiceId = #{publicServiceId,jdbcType=VARCHAR},
+      yktId = #{yktId,jdbcType=VARCHAR},
+      trafficBusId = #{trafficBusId,jdbcType=VARCHAR},
+      area = #{area,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+   <!-- 发布活动 -->
+  <update id="updateByfabu" >
+  	update map_newstuguide_route 
+	set fabu = #{fabu}
+	where id = #{id}
+  </update>
+  
+</mapper>

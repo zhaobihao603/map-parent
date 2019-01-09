@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.arboretum.ArboretumZbglMapper">
+
+  <resultMap type="ArboretumZbgl" id="arboretumZbglResultMap">
+  	<id property="id" column="id" jdbcType="CHAR" />
+  	<result property="personCharge" column="personCharge" jdbcType="VARCHAR"/>
+  	<result property="xs" column="xs" jdbcType="VARCHAR"/>
+  	<result property="ys" column="ys" jdbcType="VARCHAR"/>
+  	<result property="x" column="x" jdbcType="VARCHAR"/>
+  	<result property="y" column="y" jdbcType="VARCHAR"/>
+  	<result property="area" column="area" jdbcType="CHAR"/>
+  	
+  	<collection property="yhjlList" ofType="ArboretumYhjl" resultMap="com.imap.cloud.common.dao.arboretum.ArboretumYhjlMapper.arboretumYhjlResultMap"/>
+  </resultMap>
+  
+  <select id="selectAll" parameterType="ArboretumZbgl" resultMap="arboretumZbglResultMap">
+  	select * from arboretum_zbgl z where z.area = #{area}
+  	<if test="personCharge != null and personCharge != '' ">
+  		and z.personCharge like CONCAT('%',#{personCharge},'%')
+  	</if>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="arboretumZbglResultMap">
+  	select * from arboretum_zbgl z where z.id = #{id}
+  </select>
+  
+  <select id="selectFindAll" parameterType="String" resultMap="arboretumZbglResultMap">
+  	select * from arboretum_zbgl z where z.area = #{area}
+  </select>
+  
+  <insert id="insertSelective" parameterType="ArboretumZbgl">
+  	insert into arboretum_zbgl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="personCharge != null">
+        personCharge,
+      </if>
+      <if test="xs != null">
+        xs,
+      </if>
+      <if test="ys != null">
+        ys,
+      </if>
+      <if test="x != null">
+        x,
+      </if>
+      <if test="y != null">
+        y,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=CHAR},
+      </if>
+      <if test="personCharge != null">
+        #{personCharge,jdbcType=VARCHAR},
+      </if>
+      <if test="xs != null">
+        #{xs,jdbcType=VARCHAR},
+      </if>
+      <if test="ys != null">
+        #{ys,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null">
+        #{x,jdbcType=VARCHAR},
+      </if>
+      <if test="y != null">
+        #{y,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="ArboretumZbgl">
+    update arboretum_zbgl 
+    <set>
+    	<if test="personCharge != null and personCharge != ''">personCharge = #{personCharge},</if>
+    	<if test="xs != null and xs != ''">xs = #{xs},</if>
+    	<if test="ys != null and ys != ''">ys = #{ys},</if>
+    	<if test="x != null and x != ''">x = #{x},</if>
+    	<if test="y != null and y != ''">y = #{y},</if>
+    	<if test="area != null and area != ''">area = #{area},</if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from arboretum_zbgl where id = #{id}	
+  </delete>
+  
+  <delete id="deleteByPkShu" parameterType="String">
+    delete from arboretum_zbgl_shu where zid = #{id}
+  </delete>
+  
+  <insert id="insertPkShuId" parameterType="map" useGeneratedKeys="false">
+  	<!-- insert into arboretum_zbgl_shu(zid,sid) values
+  	<foreach collection="sid" item="sid" separator="," >
+		 (#{zid},#{sid})
+	</foreach> -->	 
+  	insert into arboretum_zbgl_shu(zid,sid) 
+  	<foreach collection="sid" item="sid" separator="union all" >
+  		select #{zid},#{sid} from dual 
+  	</foreach>
+  </insert>
+  
+</mapper>

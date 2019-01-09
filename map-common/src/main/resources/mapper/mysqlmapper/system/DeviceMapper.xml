@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.system.DeviceMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.system.Device">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="SHAPE" jdbcType="VARCHAR" property="SHAPE" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="number" jdbcType="VARCHAR" property="number" />
+   <!--  <result column="parentType" jdbcType="VARCHAR" property="parentType" /> -->
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <!-- <result column="imageId" jdbcType="VARCHAR" property="imageId" /> -->
+    <result column="standard" jdbcType="VARCHAR" property="standard" />
+    <association column="imageId" property="image" javaType="com.imap.cloud.common.entity.system.SysFile">
+			<id column="fileId" property="id" jdbcType="CHAR"/>
+			<result column="file_url" property="fileUrl" jdbcType="VARCHAR"/>
+	</association>
+	<association column="areaId" property="area" javaType="com.imap.cloud.common.entity.map.MapLayer">
+			<id column="area_id" property="id" jdbcType="CHAR"/>
+			<result column="area_ename" property="ename" jdbcType="VARCHAR"/>
+			<result column="area_alias" property="alias" jdbcType="VARCHAR"/>
+			<result column="area_name" property="name" jdbcType="VARCHAR"/>
+	</association>
+	<association column="parentid" property="parent" javaType="com.imap.cloud.common.entity.system.Device">
+			<id column="parent_id" property="id" jdbcType="CHAR"/>
+			<result column="parent_name" property="name" jdbcType="VARCHAR"/>
+	</association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    device.id id,
+    astext(device.SHAPE) as SHAPE, 
+    device.name name, 
+    device.number  number,
+    device.parentid parentid,
+    device.status status,
+    <!-- device.imageId imageId,  -->
+    device.standard standard ,
+    image.id fileId, 
+    image.file_url file_url,
+    area.id area_id,
+	area.ename area_ename,
+	area.alias area_alias,
+	area.name area_name,
+	parent.id parent_id,
+	parent.name parent_name
+  </sql>
+  
+  <select id="selectByParentType" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select 
+	<include refid="Base_Column_List"/> 
+	from map_device device left join sys_file image on device.imageId = image.id
+	where parentid=#{parentid,jdbcType=VARCHAR} 
+  </select>
+  
+  <select id="countByParentType" resultType="Integer" parameterType="java.lang.String">
+		select count(*)
+		from map_device 
+		where parentid=#{parentid,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="updateById" parameterType="com.imap.cloud.common.dto.DeviceDTO">
+		update map_device
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null" >
+                name=#{name,jdbcType=VARCHAR},
+            </if>
+			<if test="SHAPE != null" >
+                SHAPE=GEOMFROMTEXT('${SHAPE}'),
+            </if>
+			<if test="number != null" >
+                number=#{number,jdbcType=VARCHAR},
+            </if>
+			<if test="parentid != null" >
+                parentid=#{parentid,jdbcType=VARCHAR},
+            </if>
+			<if test="status != null" >
+                status=#{status,jdbcType=VARCHAR},
+            </if>
+			<if test="imageId != null" >
+                imageId=#{imageId,jdbcType=VARCHAR},
+            </if>
+			<if test="standard != null" >
+                standard=#{standard,jdbcType=VARCHAR},
+            </if>
+            <if test="areaId != null" >
+                areaId=#{areaId,jdbcType=VARCHAR},
+            </if>
+		</trim>
+		where id=#{id,jdbcType=CHAR}
+	</update>
+	
+	<select id="selectById" parameterType="com.imap.cloud.common.dto.DeviceDTO" resultMap="BaseResultMap">
+	  	select 
+		<include refid="Base_Column_List"/>
+		from map_device device
+		left join sys_file image on device.imageId = image.id
+		left join map_layer area on device.areaId=area.id
+		left join map_device parent on device.parentid=parent.id
+		where device.id=#{id,jdbcType=CHAR}
+		<if test="name !=null and name != ''"> 
+             and device.name=#{name,jdbcType=VARCHAR}
+        </if>
+        <if test="number !=null and number != ''" > 
+             and device.number=#{number,jdbcType=VARCHAR}
+        </if>
+        <if test="parentid !=null and parentid != ''" > 
+             and device.parentid=#{parentid,jdbcType=VARCHAR}
+        </if>
+        <if test="imageId !=null and imageId != ''"> 
+             and device.imageId=#{imageId,jdbcType=VARCHAR}
+        </if>
+	  </select>
+	
+	<select id="selectByConditionMap" parameterType="com.imap.cloud.common.dto.DeviceDTO" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List"/> 
+		from map_device device 
+		left join sys_file image on device.imageId = image.id
+		left join map_layer area on device.areaId=area.id
+		left join map_device parent on device.parentid=parent.id
+		<trim prefix="WHERE"  prefixOverrides="AND |OR">
+			<if test="name !=null and name != ''"> 
+	             and device.name=#{name,jdbcType=VARCHAR}
+	        </if>
+	        <if test="number !=null and number != ''" > 
+	             and device.number like CONCAT('%',#{number,jdbcType=VARCHAR},'%' )
+	        </if>
+	        <if test="parentid !=null and parentid != ''" > 
+	             and device.parentid=#{parentid,jdbcType=VARCHAR}
+	        </if>
+	        <if test="imageId !=null and imageId != ''"> 
+	             and device.imageId=#{imageId,jdbcType=VARCHAR}
+	        </if>
+		</trim>
+	</select>
+	
+	<select id="countByConditionMap" resultType="Integer" parameterType="com.imap.cloud.common.dto.DeviceDTO">
+		select count(*)
+		from map_device device
+		<trim prefix="WHERE"  prefixOverrides="AND |OR">
+			<if test="name !=null and name != ''"> 
+	             and device.name=#{name,jdbcType=VARCHAR}
+	        </if>
+	        <if test="number !=null and number != ''" > 
+	             and device.number=#{number,jdbcType=VARCHAR}
+	        </if>
+	        <if test="parentid !=null and parentid != ''" > 
+	             and device.parentid=#{parentid,jdbcType=VARCHAR}
+	        </if>
+	        <if test="imageId !=null and imageId != ''"> 
+	             and device.imageId=#{imageId,jdbcType=VARCHAR}
+	        </if>
+		</trim>
+  	</select>
+  	
+  <select id="comboboxType" resultType="java.lang.String" parameterType="java.lang.String">
+		select type from map_device  where parentid = #{parentid,jdbcType=VARCHAR} GROUP BY type 
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String">
+  		delete from map_device where id=#{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByParentId" parameterType="java.lang.String">
+  		delete from map_device where parentid=#{parentid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.imap.cloud.common.dto.DeviceDTO">
+  	<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+			select  replace(uuid(),'-','')   from dual  
+	</selectKey>
+	insert into map_device(
+			id,name,number,parentid,status,standard,SHAPE,areaId) 
+		values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR},#{number,jdbcType=VARCHAR}, 
+			#{parentid,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{standard,jdbcType=VARCHAR},GEOMFROMTEXT('${SHAPE}'),#{areaId,jdbcType=VARCHAR}
+			)
+  </insert>
+  
+  <select id="selectIsStatus" resultMap="BaseResultMap">
+  	select 
+		<include refid="Base_Column_List"/>
+		from map_device device 
+		left join sys_file image on device.imageId = image.id
+		left join map_layer area on device.areaId=area.id
+		left join map_device parent on device.parentid=parent.id
+		<![CDATA[ where device.status is not null and device.status <>'' ]]>
+  </select>
+</mapper>

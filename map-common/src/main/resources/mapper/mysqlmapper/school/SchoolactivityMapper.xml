@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.school.SchoolactivityMapper">
+  <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.school.Schoolactivity">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ename" jdbcType="VARCHAR" property="ename" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="en_address" jdbcType="VARCHAR" property="enAddress" />
+    <result column="createdTime" jdbcType="VARCHAR" property="createdTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="host" jdbcType="VARCHAR" property="host" />    
+    <result column="speaker" jdbcType="VARCHAR" property="speaker" />
+    <result column="speaktime" jdbcType="VARCHAR" property="speaktime" />
+    <result column="updatedTime" jdbcType="VARCHAR" property="updatedTime" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="fabu" jdbcType="BIT" property="fabu" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="audited" jdbcType="BIT" property="audited" />
+    <result column="fabuState" jdbcType="INTEGER" property="fabuState" />
+    <result column="area" jdbcType="CHAR" property="area" />
+  </resultMap>
+  <resultMap id="BaseResultMapWithOrg" type="com.imap.cloud.common.entity.school.Schoolactivity" extends="BaseResultMap">
+        <collection property="UploadRecordList" column="id" 
+        select="com.imap.cloud.common.dao.system.SysFileMapper.selectActivityPhoto"></collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, address, createdTime, deleted, host, name,ename,enAddress,speaker, speaktime, updatedTime, x, 
+    y, description, fabu, username, audited, fabuState, area
+  </sql>
+     <!-- 建立与上传连接关联 -->
+    <insert id="linkschoolUpload">
+	    insert into connect_school_upload(schoolId, uploadId)
+	    values (#{schoolId,jdbcType=CHAR}, #{uploadId,jdbcType=CHAR})
+  	</insert> 
+  	
+  	 <!-- 修改与上传连接关联 -->
+  	<update id="updateschoolUpload" >
+  	update connect_school_upload
+	set
+	 uploadId=#{uploadId,jdbcType=CHAR}
+	where schoolId=#{schoolId,jdbcType=CHAR}
+  	</update>
+  	
+  	<!-- 删除与上传之间的关联 -->
+	<delete id="deleteVrUpload">
+	    delete from connect_school_upload where schoolId=#{schoolId,jdbcType=CHAR}
+	</delete>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMapWithOrg">
+    	SELECT
+			m.*
+		FROM
+			map_schoolactivity m
+    where m.id = #{id,jdbcType=CHAR}
+  </select>
+  
+  <!-- 查询所有信息 -->
+  <select id="selectAll" resultMap="BaseResultMapWithOrg" parameterType="com.imap.cloud.common.entity.school.Schoolactivity">
+	SELECT
+		m.*
+	FROM
+		map_schoolactivity m
+	where 1=1
+	<if test ="name!=null">
+		and (m.name like CONCAT('%',#{name},'%')
+			or m.ename like CONCAT('%',#{name},'%'))
+   </if>
+    <if test="area!=null">
+    	and m.area=#{area}
+   </if>
+	<if test="fabu!=null">
+    	and m.fabu = #{fabu}
+   </if> 
+
+   order by m.fabu desc, m.speaktime desc
+  </select>
+  
+  <!-- 发布活动 -->
+  <update id="updateByfabu" >
+  	update map_schoolactivity 
+	set fabu = #{fabu},
+		fabuState = #{fabuState}
+	where id = #{id}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from map_schoolactivity
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.imap.cloud.common.entity.school.Schoolactivity">
+    insert into map_schoolactivity (id,address, createdTime, 
+      deleted, host, name,ename,en_address, speaker, 
+      speaktime, updatedTime, x, 
+      y, description, fabu, username, 
+      audited, fabuState, area
+      )
+    values (#{id,jdbcType=CHAR}, #{address,jdbcType=VARCHAR}, #{createdTime,jdbcType=VARCHAR}, 
+      #{deleted,jdbcType=BIT}, #{host,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{ename,jdbcType=VARCHAR},
+      #{en_address,jdbcType=VARCHAR}, #{speaker,jdbcType=VARCHAR}, 
+      #{speaktime,jdbcType=VARCHAR}, #{updatedTime,jdbcType=VARCHAR}, #{x,jdbcType=DOUBLE}, 
+      #{y,jdbcType=DOUBLE}, #{description,jdbcType=VARCHAR}, #{fabu,jdbcType=BIT}, #{username,jdbcType=VARCHAR}, 
+      #{audited,jdbcType=BIT}, #{fabuState,jdbcType=INTEGER}, #{area,jdbcType=CHAR}
+      )
+  </insert>
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.imap.cloud.common.entity.school.Schoolactivity">
+    update map_schoolactivity
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="enAddress != null">
+        en_address = #{enAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        createdTime = #{createdTime,jdbcType=VARCHAR},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="host != null">
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ename != null">
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="speaker != null">
+        speaker = #{speaker,jdbcType=VARCHAR},
+      </if>
+      <if test="speaktime != null">
+        speaktime = #{speaktime,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedTime != null">
+        updatedTime = #{updatedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="fabu != null">
+        fabu = #{fabu,jdbcType=BIT},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="audited != null">
+        audited = #{audited,jdbcType=BIT},
+      </if>
+      <if test="fabuState != null">
+        fabuState = #{fabuState,jdbcType=INTEGER},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.imap.cloud.common.entity.school.Schoolactivity">
+    update map_schoolactivity
+    set 
+      createdTime = #{createdTime,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      host = #{host,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ename = #{ename,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      en_address = #{enAddress,jdbcType=VARCHAR},
+      speaker = #{speaker,jdbcType=VARCHAR},
+      speaktime = #{speaktime,jdbcType=VARCHAR},
+      updatedTime = #{updatedTime,jdbcType=VARCHAR},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      description = #{description,jdbcType=VARCHAR},
+      fabu = #{fabu,jdbcType=BIT},
+      username = #{username,jdbcType=VARCHAR},
+      audited = #{audited,jdbcType=BIT},
+      fabuState = #{fabuState,jdbcType=INTEGER},
+      area = #{area,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+</mapper>

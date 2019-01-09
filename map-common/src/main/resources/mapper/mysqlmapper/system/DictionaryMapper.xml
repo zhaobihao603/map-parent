@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.system.DictionaryMapper">
+	<resultMap id="ItemResultMap" type="com.imap.cloud.common.entity.system.DictionaryItem">
+		<id column="id" property="id" jdbcType="CHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="parentid" property="parentid" jdbcType="CHAR" />
+		<result column="datatype" property="datatype" jdbcType="VARCHAR" />
+		<result column="shortvalue" property="shortvalue" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ItemResultMapWithSubItem" type="com.imap.cloud.common.entity.system.DictionaryItem" extends="ItemResultMap">
+		<collection column="subitem_itemid" property="lstSubItem" ofType="com.imap.cloud.common.entity.system.DictionarySubItem">
+			<id column="subitem_id" property="id" jdbcType="CHAR" />
+			<result column="subitem_code" property="code" jdbcType="VARCHAR" />
+			<result column="subitem_shortvalue" property="shortvalue" jdbcType="VARCHAR" />
+			<result column="subitem_value" property="value" jdbcType="VARCHAR" />
+			<result column="subitem_ordervalue" property="ordervalue" jdbcType="INTEGER" />
+		</collection>
+	</resultMap>
+	<resultMap id="SubItemResultMap" type="com.imap.cloud.common.entity.system.DictionarySubItem">
+		<id column="subitem_id" property="id" jdbcType="CHAR"/>
+		<result column="subitem_code" property="code" jdbcType="VARCHAR"/>
+		<result column="subitem_shortvalue" property="shortvalue" jdbcType="VARCHAR"/>
+		<result column="subitem_value" property="value" jdbcType="VARCHAR"/>
+		<result column="subitem_ordervalue" property="ordervalue" jdbcType="INTEGER" />
+		<!-- 查询父节点 -->
+		<association column="subitem_itemid" property="item" javaType="com.imap.cloud.common.entity.system.DictionaryItem">
+			<id column="item_id" property="id" jdbcType="CHAR"/>
+			<result column="item_code" property="code" jdbcType="VARCHAR"/>
+			<result column="item_parentid" property="code" jdbcType="CHAR"/>
+			<result column="item_datatype" property="datatype" jdbcType="VARCHAR"/>
+			<result column="item_shortvalue" property="shortvalue" jdbcType="VARCHAR"/>
+			<result column="item_value" property="value" jdbcType="VARCHAR"/>
+			<result column="item_isLeaf" property="isLeaf" jdbcType="BIT"/>
+			<result column="item_state" property="state" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<sql id="base_param">
+		id,code,datatype,parentid,shortvalue,value,isLeaf,state
+	</sql>
+	<!-- 与 ItemResultMapWithSubItem 配套使用 ,查询数据库字典元素及其属性 -->
+	<sql id="itemWithSubItem_param">
+		item.id as id,
+		item.code as code,
+		item.datatype as datatype,
+		item.parentid as parentid,
+		item.shortvalue as shortvalue,
+		item.value as value,
+		item.isLeaf as isLeaf,
+		item.state as state,
+		subitem.id as subitem_id,
+		subitem.code as subitem_code,
+		subitem.itemid as subitem_itemid,
+		subitem.shortvalue as subitem_shortvalue,
+		subitem.value as subitem_value,
+		subitem.ordervalue as subitem_ordervalue
+	</sql>
+	<select id="selectItemsByCodes" resultMap="ItemResultMap">
+        select 
+        id,code,value,shortvalue
+        from common_datadir_item e
+        where e.code in
+        <foreach collection="list" item="code" index="index"
+            open="(" close=")" separator=",">
+            #{code}
+        </foreach>
+   	</select>
+	<select id="selectById" resultMap="ItemResultMap" parameterType="java.lang.String">
+		select
+		<include refid="base_param" />
+		from common_datadir_item 
+		where id=#{id}
+	</select>
+	<select id="selectByCode" resultMap="ItemResultMapWithSubItem" parameterType="java.lang.String">
+		select
+		<include refid="itemWithSubItem_param" />
+		from common_datadir_item item 
+		left outer join common_datadir_subitem subitem on subitem.itemid=item.id
+		where item.code=#{code} 
+	</select>
+	
+	<!-- 1、mysql数据库主键自增长:keyProperty="id" useGeneratedKeys="true" -->
+	<insert id="addDictionaryItem" parameterType="com.imap.cloud.common.entity.system.DictionaryItem">
+	    <selectKey keyProperty="id" resultType="String" order="BEFORE">  
+	        select  replace(uuid(),'-','')   from dual  
+	    </selectKey>
+		insert into
+		common_datadir_item(id,code,datatype,parentid,shortvalue,value,isLeaf,state)
+		values
+		(#{id,jdbcType=CHAR},#{code},#{datatype},#{parentid},#{shortvalue,jdbcType=VARCHAR},#{value,jdbcType=VARCHAR},#{isLeaf},#{state,jdbcType=VARCHAR})
+		<!-- insert into common_datadir_item(dictionaryItem) values(#{dictionaryItem}) -->
+	</insert>
+	<insert id="addSubItem" parameterType="com.imap.cloud.common.entity.system.DictionarySubItem">
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">  
+	        select  replace(uuid(),'-','')   from dual  
+	    </selectKey>
+		insert into
+		common_datadir_subitem(id,code,itemid,shortvalue,value,ordervalue)
+		values
+		(#{id,jdbcType=CHAR},#{code},#{item.id},#{shortvalue},#{value},#{ordervalue})
+		<!-- insert into common_datadir_item(dictionaryItem) values(#{dictionaryItem}) -->
+	</insert>
+	<delete id="deleteById">
+		delete from common_datadir_item where id=#{id}
+	</delete>
+	<delete id="deleteSubItemById">
+		delete from common_datadir_subitem where id=#{id}
+	</delete>
+	<update id="update" parameterType="com.imap.cloud.common.entity.system.DictionaryItem">
+		update common_datadir_item
+		<set>
+	      <if test="code != null">
+	        code = #{code,jdbcType=VARCHAR},
+	      </if>
+	      <if test="datatype != null">
+	        datatype = #{datatype,jdbcType=VARCHAR},
+	      </if>
+	      <if test="parentid != null">
+	        parentid = #{parentid,jdbcType=CHAR},
+	      </if>
+	      <if test="shortvalue != null">
+	        shortvalue = #{shortvalue,jdbcType=VARCHAR},
+	      </if>
+	      <if test="value != null">
+	        value = #{value,jdbcType=VARCHAR},
+	      </if>
+	      <if test="isLeaf != null">
+	        isLeaf = #{isLeaf,jdbcType=BIT},
+	      </if>
+	      <if test="state != null">
+	        state = #{state,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+	    where id = #{id,jdbcType=CHAR}
+	</update>
+	<!-- 更新父元素id(parentid) -->
+	<update id="updateParentIdById">
+		update common_datadir_item set
+		parentid = #{parentid}
+		where id = #{id}
+	</update>
+	
+	<!-- 更新叶子节点属性 -->
+	<update id="updateSubItem" parameterType="com.imap.cloud.common.entity.system.DictionarySubItem">
+		update common_datadir_subitem set
+		code = #{code},
+		shortvalue = #{shortvalue},
+		value = #{value},
+		ordervalue = #{ordervalue}
+		where id = #{id}
+	</update>
+	
+	<!-- 树节点查询 -->
+	<select id="selectChildNodeById" resultMap="ItemResultMap" parameterType="java.lang.String">
+		select
+		id,value,state,datatype,code,parentid,shortvalue,isLeaf
+		from
+		common_datadir_item
+		where parentid=#{id,jdbcType=CHAR}
+	</select>
+	
+	<!-- 根据属性的itemid查询属性值及其对应的叶子节点 -->
+	<select id="selectSubItemByItemId" resultMap="SubItemResultMap" parameterType="java.lang.String">
+		select 
+		subitem.id subitem_id,
+		subitem.code subitem_code,
+		subitem.itemid subitem_itemid,
+		subitem.shortvalue subitem_shortvalue,
+		subitem.value subitem_value,
+		subitem.ordervalue subitem_ordervalue,
+		item.id as item_id,
+		item.code as item_code,
+		item.datatype as item_datatype,
+		item.parentid as item_parentid,
+		item.shortvalue as item_shortvalue,
+		item.value as item_value,
+		item.isLeaf as item_isLeaf,
+		item.state as item_state
+		from common_datadir_subitem subitem
+		left outer join common_datadir_item item on subitem.itemid=item.id
+		where subitem.itemid=#{itemid} order by subitem.ordervalue
+	</select>
+	
+	<!-- 根据属性的id查询属性值及其对应的叶子节点 -->
+	<select id="selectSubItemById" resultMap="SubItemResultMap" parameterType="java.lang.String">
+		select 
+		subitem.id subitem_id,
+		subitem.code subitem_code,
+		subitem.itemid subitem_itemid,
+		subitem.shortvalue subitem_shortvalue,
+		subitem.value subitem_value,
+		subitem.ordervalue subitem_ordervalue,
+		item.id as item_id,
+		item.code as item_code,
+		item.datatype as item_datatype,
+		item.parentid as item_parentid,
+		item.shortvalue as item_shortvalue,
+		item.value as item_value,
+		item.isLeaf as item_isLeaf,
+		item.state as item_state
+		from common_datadir_subitem subitem
+		left outer join common_datadir_item item on subitem.itemid=item.id
+		where subitem.id=#{id} order by subitem.ordervalue
+	</select>
+	
+	<!-- 查询数据字典子项 -->
+	<select id="selectChildItemsById" resultMap="ItemResultMapWithSubItem" parameterType="java.lang.String">
+		select <include refid="itemWithSubItem_param" />
+		from common_datadir_item item 
+		left outer join common_datadir_subitem subitem on subitem.itemid=item.id
+		where item.parentid=#{parentid}
+		order by item.order asc
+	</select>  
+	
+	<!-- 查询数据字典子项的数目 -->
+	<select id="countAllChildItemsById" resultType="Integer" parameterType="java.lang.String">
+		select count(*)
+		from common_datadir_item 
+		where parentid=#{parentid}
+	</select>
+	
+	<!-- 根据code查询数据字典项(子项)个数 -->
+	<select id="countItemsByCode" resultType="Integer" parameterType="java.lang.String">
+		select sum(count) from(
+			SELECT count(*) count FROM  common_datadir_item a
+			WHERE
+			a.`code` = #{code}
+			union all  
+			SELECT count(*) FROM common_datadir_subitem b
+			WHERE
+			b.`code` = #{code}
+		) c
+	</select>
+	
+	<!-- 根据code查询数据字典项个数 -->
+	<select id="selectPageChildItemsbyId" resultMap="ItemResultMap">
+		select <include refid="base_param" />
+		from common_datadir_item 
+		where parentid=#{parentid} 
+	</select>
+	
+	<!-- 分页查询数据字典子项 -->
+	<select id="selectItemByValue" parameterType="java.lang.String" resultMap="ItemResultMap">
+		select <include refid="base_param" />
+		from common_datadir_item 
+		where value=#{value}
+	</select>
+	
+	<!-- 校单位信息加载sec_url表 -->
+	<select id="selectChildItemsByIdForSec" resultMap="ItemResultMapWithSubItem" parameterType="java.lang.String">
+		select u_id as id,url_name as value,code
+		from sec_url sec 
+		where dispaly =0 
+		<choose>
+			<when test="_parameter !=null">
+				and parentid=#{parentid}
+			</when>
+			<otherwise>
+				and parentid is null and code is not null
+			</otherwise>
+		</choose>
+	</select> 
+</mapper>

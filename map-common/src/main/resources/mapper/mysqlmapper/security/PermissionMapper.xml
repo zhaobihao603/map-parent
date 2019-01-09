@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.security.PermissionMapper">
+  
+  <resultMap id="permissionResultMap" type="Permission">
+	<id column="p_id" property="id" jdbcType="CHAR" />
+  	<result column="per_name" property="per_name" jdbcType="VARCHAR" />
+  	<!-- 权限对应角色 -->
+  	<collection property="roleSet" resultMap="com.imap.cloud.common.dao.security.RoleMapper.roleResultMap"></collection>
+  	<!-- 权限对应用户 -->
+  	<collection property="userSet" resultMap="com.imap.cloud.common.dao.security.UserMapper.userResultMap"></collection>
+  	<!-- 权限对应菜单URL -->
+  	<collection property="urlSet" resultMap="com.imap.cloud.common.dao.security.UrlMapper.urlResultMap"></collection>
+  	<!-- 权限对应方法、类 -->
+  	<collection property="methodClassSet" resultMap="com.imap.cloud.common.dao.security.MethodClassMapper.MethodClassResultMap"></collection>
+  </resultMap>
+  
+  <select id="selectAll" parameterType="Permission" resultMap="permissionResultMap">
+  	<choose>
+		<when test="per_name == null or per_name == ''">select * from sec_permission where deleted = 0 </when>
+		<otherwise>
+			select * from sec_permission where deleted = 0 
+		  	<if test="per_name != null and per_name != ''">
+		  		and per_name like CONCAT('%',#{per_name},'%' ) 
+		  	</if>
+		</otherwise>
+	</choose>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="permissionResultMap">
+	<!-- select * from sec_permission p where p.p_id = #{id} and p.deleted = 0  -->
+	select * from sec_permission p LEFT JOIN sec_permission_url pu on p.p_id = pu.pid
+	LEFT JOIN sec_url u on u.u_id = pu.uid
+	where p.p_id = #{id} and p.deleted = 0
+  </select>
+  
+ <select id="selectByPkUrlMethodClass" parameterType="String" resultMap="com.imap.cloud.common.dao.security.MethodClassMapper.MethodClassResultMap">
+	select m.* from sec_permission p2 inner JOIN sec_methodclass_permission mp on p2.p_id = mp.pid
+	LEFT JOIN sec_methodclass m on m.id = mp.mid where p2.p_id = #{id} and p2.deleted = 0
+  </select> 
+  
+  <select id="selectNameByPk" parameterType="String" resultType="int">
+	select count(1) from sec_permission p where p.per_name = #{name}
+  </select>
+  
+  <update id="deleteByPk" parameterType="String">
+  	update sec_permission p set p.deleted = 1 where p.p_id = #{id}
+  </update>
+  
+  <delete id="deleteByPkUser" parameterType="String">
+  	delete from sec_permission_user where pid = #{id}
+  </delete>
+  
+  <delete id="deleteByPkRole" parameterType="String">
+  	delete from sec_permission_role where pid = #{id}
+  </delete>
+  
+  <delete id="deleteByPkUrl" parameterType="String">
+  	delete from sec_permission_url  where pid = #{id}
+  </delete>
+  
+  <delete id="deleteByPkMethodClass" parameterType="String">
+    delete from sec_methodclass_permission  where pid = #{id}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="Permission">
+  	insert into sec_permission(p_id,per_name,deleted) values(#{id},#{per_name},#{deleted})
+  </insert>
+  
+  <insert id="insertUrl" parameterType="map" >
+  	insert into sec_permission_url(pid,uid) values
+  	<foreach collection="uid" item="uid" separator="," >
+  		(#{pid},#{uid})
+  	</foreach>
+  	<!--useGeneratedKeys="false" insert into sec_permission_url(pid,uid) 
+  	<foreach collection="uid" item="uid" separator="union all" >
+  		select #{pid},#{uid} from dual 
+  	</foreach> -->
+  </insert>
+  
+  <insert id="insertMethodClass" parameterType="map" useGeneratedKeys="false">
+  	<!-- insert into sec_methodclass_permission(pid,mid) values
+  	<foreach collection="mid" item="mid" separator="," >
+		 (#{pid},#{mid})
+	</foreach> -->
+	insert into sec_methodclass_permission(pid,mid) 
+  	<foreach collection="mid" item="mid" separator="union all" >
+		 select #{pid},#{mid} from dual 
+	</foreach>
+  </insert>
+  
+  <update id="updateByPkSelective"  parameterType="Permission">
+    update sec_permission set 
+  		per_name = #{per_name}
+  	WHERE p_id = #{id}
+  </update>
+  
+</mapper>

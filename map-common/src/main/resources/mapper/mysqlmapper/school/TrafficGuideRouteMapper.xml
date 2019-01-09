@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imap.cloud.common.dao.school.TrafficGuideRouteMapper">
+  
+  <resultMap type="TrafficGuideRoute" id="trafficGuideRouteResultMap">
+  	<id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="trafficLine" property="trafficLine" jdbcType="VARCHAR" />
+    <result column="trafficType" property="trafficType" jdbcType="VARCHAR" />
+    <result column="busLine" property="busLine" jdbcType="VARCHAR" />
+    <result column="startStation" property="startStation" jdbcType="VARCHAR" />
+    <result column="endStation" property="endStation" jdbcType="VARCHAR" />
+    <!-- 关联节点 -->
+    <collection property="sites"  ofType="TrafficGuideSite" resultMap="com.imap.cloud.common.dao.school.TrafficGuideSiteMapper.trafficGuideSiteResultMap"/>
+  </resultMap>
+  
+  
+  <select id="selectTrafficQuery" parameterType="Map" resultMap="trafficGuideRouteResultMap">
+  	select * from school_trafficguide_route r LEFT JOIN school_trafficguide_site s
+	on r.id = s.route_id
+	where r.startStation = #{startStation} and r.endStation = #{endStation}
+	and r.trafficType = #{trafficType}
+  </select>
+  
+  <select id="selectAll" parameterType="TrafficGuideRoute" resultMap="trafficGuideRouteResultMap">
+    select * from school_trafficguide_route 
+    <if test="name != null and name != ''">
+    	<where>
+    		name like CONCAT('%',#{name},'%' ) 
+    	</where>
+    </if>
+  </select>
+  
+  <select id="selectByPk" parameterType="String" resultMap="trafficGuideRouteResultMap">
+  	SELECT * FROM school_trafficguide_route r LEFT JOIN school_trafficguide_site s
+	on r.id = s.route_id where r.id = #{id}
+  </select>
+  
+  <insert id="insertSelective" parameterType="TrafficGuideRoute">
+  	insert into school_trafficguide_route(id,name,trafficLine,trafficType,busLine,startStation,endStation)
+  	value(#{id},#{name},#{trafficLine},#{trafficType},#{busLine},#{startStation},#{endStation})
+  </insert>
+  
+  <update id="updateByPkSelective" parameterType="TrafficGuideRoute">
+  	update school_trafficguide_route 
+  	<set>
+  		<if test="name != null and name != ''">name = #{name},</if>
+  		<if test="trafficLine != null and trafficLine != ''">trafficLine = #{trafficLine},</if>
+  		<if test="trafficType != null and trafficType != ''">trafficType = #{trafficType},</if>
+  		<if test="busLine != null and busLine != ''">busLine = #{busLine},</if>
+  		<if test="startStation != null and startStation != ''">startStation = #{startStation},</if>
+  		<if test="endStation != null and endStation != ''">endStation = #{endStation}</if>
+  	</set>
+  	where id = #{id}
+  </update>
+  
+  <delete id="deleteByPk" parameterType="String">
+  	delete from school_trafficguide_route where id = #{id}
+  </delete>
+  
+  <delete id="deleteSite" parameterType="String">
+  	delete from school_trafficguide_site where route_id = #{id}
+  </delete>
+  
+  
+</mapper>

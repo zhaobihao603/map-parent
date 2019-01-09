@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imap.cloud.common.dao.map.MapSchoolBorderMapper" >
+    <resultMap id="BaseResultMap" type="com.imap.cloud.common.entity.map.MapSchoolBorder" >
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="border" property="border" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, astext(border) as border, area
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from map_school_border
+        where id = #{id,jdbcType=CHAR}
+    </select>
+    
+    <select id="getByAreaId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from map_school_border
+        where area = #{areaId,jdbcType=CHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.imap.cloud.common.entity.map.MapSchoolBorder" >
+        insert into map_school_border (id, border,area)
+        values (#{id,jdbcType=CHAR}, GEOMFROMTEXT('${border}'), #{area,jdbcType=CHAR})
+    </insert>
+    
+    <select id="selectAll" parameterType="com.imap.cloud.common.entity.map.MapSchoolBorder" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from map_school_border where 1=1 
+			<if test="border != null and border !=''">
+		      and border = GEOMFROMTEXT(#{border})
+			</if>
+			<if test="area != null and area!=''">
+		      and area = #{area,jdbcType=CHAR}
+			</if>
+	</select>
+
+    <update id="updateById" parameterType="com.imap.cloud.common.entity.map.MapSchoolBorder" >
+        update map_school_border
+        <set >
+            <if test="border != null and border != ''" >
+                border = #{border,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null and area != ''" >
+                area = #{area,jdbcType=CHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=CHAR}
+    </update>
+    
+    <update id="updateByArea" parameterType="com.imap.cloud.common.entity.map.MapSchoolBorder" >
+        update map_school_border
+        <set >
+            <if test="border != null and border != ''" >
+                border = #{border,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where area = #{area,jdbcType=CHAR}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from map_school_border  where id = #{id,jdbcType=CHAR}
+    </delete>
+    
+    <delete id="deleteByArea" parameterType="java.lang.String" >
+        delete from map_school_border where area = #{areaId,jdbcType=CHAR}
+    </delete>
+
+</mapper>
