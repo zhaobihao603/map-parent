@@ -1,4 +1,4 @@
-package com.map.cloud.config;
+package com.imap.cloud.configserver.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
