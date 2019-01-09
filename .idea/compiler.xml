@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="map-common" />
         <module name="map-configserver" />
+        <module name="map-manage" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="map-common" target="1.8" />
       <module name="map-configserver" target="1.8" />
+      <module name="map-manage" target="1.8" />
       <module name="map-parent" target="1.8" />
     </bytecodeTargetLevel>
   </component>

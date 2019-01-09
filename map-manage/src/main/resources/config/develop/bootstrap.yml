@@ -1,0 +1,68 @@
+server:
+  port: 9000
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    max-connections: 5000
+spring:
+  application:
+    name: map-manage
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        enabled: true
+        service-name: map-manage
+        ip-address: 127.0.0.1
+        prefer-ip-address: true
+        heartbeat:
+          enabled: true
+    config:
+      name: map-manage
+      profile: develop
+      discovery:
+        #开启通过服务来访问config-server
+        enabled: true
+        #指定配置中心注册的服务名
+        service-id: map-configcenter
+        # true: 如果访问配置中心失败，则停止启动服务
+      fail-fast: true
+       # 配置重试，默认是重试6次，最初是延迟1s再次重试，如果再失败，则延迟1.1*1s、1.1*1.1*1s、… 。可以使用这个配置
+      retry:
+        initial-interval: 2000
+        # 最多重试次数
+        max-attempts: 6
+        # 最大重试间隔
+        max-interval: 4000
+        # 每次重试时间是之前的倍数
+        multiplier: 1.2
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+  rabbitmq:
+    virtual-host: /
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+encrypt:
+  key: sfsvpajugg
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,refresh,bus-refresh,consul,service-registry,hystrix.stream
+  server:
+    servlet:
+      context-path: /
+    ssl:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+worker:
+  id: 1

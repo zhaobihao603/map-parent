@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/map-common/map-common.iml" filepath="$PROJECT_DIR$/map-common/map-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/map-configserver/map-configserver.iml" filepath="$PROJECT_DIR$/map-configserver/map-configserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/map-manage/map-manage.iml" filepath="$PROJECT_DIR$/map-manage/map-manage.iml" />
       <module fileurl="file://$PROJECT_DIR$/map-parent.iml" filepath="$PROJECT_DIR$/map-parent.iml" />
     </modules>
   </component>

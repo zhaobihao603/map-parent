@@ -19,6 +19,7 @@
     <modules>
         <module>map-configserver</module>
         <module>map-common</module>
+        <module>map-manage</module>
     </modules>
 
     <properties>
