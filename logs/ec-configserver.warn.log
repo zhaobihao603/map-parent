@@ -955,3 +955,7 @@ Verify the connector's configuration, identify and stop any process that's liste
 2019-01-09 17:29:44.198|ec-configserver|WARN|[main]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
 2019-01-09 18:09:31.918|ec-configserver|WARN|[localhost-startStop-1]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
 2019-01-09 18:09:35.452|ec-configserver|WARN|[restartedMain]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
+2019-01-09 18:15:01.165|ec-configserver|WARN|[localhost-startStop-1]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
+2019-01-09 18:15:04.868|ec-configserver|WARN|[restartedMain]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
+2019-01-09 18:17:15.541|ec-configserver|WARN|[localhost-startStop-1]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
+2019-01-09 18:17:19.309|ec-configserver|WARN|[restartedMain]|[com.netflix.config.sources.URLConfigurationSource.<init>]|[121]|No URLs will be polled as dynamic configuration sources.
