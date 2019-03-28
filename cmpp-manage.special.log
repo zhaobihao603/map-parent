@@ -1,0 +1,111 @@
+2019-03-28T14:13:23.262 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:13:26.438 [main] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:14:51.711 [restartedMain] [WARN] t.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:14:51.758 [restartedMain] [WARN] o.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:14:55.252 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:14:56.347 [localhost-startStop-1] [ERROR] o.s.b.w.e.t.TomcatStarter - Error starting Tomcat context. Exception: org.springframework.beans.factory.BeanCreationException. Message: Error creating bean with name 'servletEndpointRegistrar' defined in class path resource [org/springframework/boot/actuate/autoconfigure/endpoint/web/ServletEndpointManagementContextConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar]: Factory method 'servletEndpointRegistrar' threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'healthEndpoint' defined in class path resource [org/springframework/boot/actuate/autoconfigure/health/HealthEndpointConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.health.HealthEndpoint]: Factory method 'healthEndpoint' threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration': Bean instantiation via constructor failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration$$EnhancerBySpringCGLIB$$20447a12]: Constructor threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSource': Post-processing of FactoryBean's singleton object failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'scopedTarget.dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception; nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$DataSourceBeanCreationException: Failed to determine a suitable driver class
+2019-03-28T14:14:56.457 [restartedMain] [WARN] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+2019-03-28T14:14:56.476 [restartedMain] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to auto-configure a DataSource: 'spring.datasource.url' is not specified and no embedded datasource could be auto-configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+
+2019-03-28T14:17:49.405 [Thread-22] [WARN] o.s.c.c.s.e.MultipleJGitEnvironmentRepository - Failed to delete temporary directory on exit: java.nio.file.AccessDeniedException: C:\Users\lenovo\AppData\Local\Temp\config-repo-1085822619065592051\.git\objects\pack\pack-14f740fe2ef09b5a1ce22c508b391958134e185a.idx
+2019-03-28T14:31:28.297 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:31:31.176 [main] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:34:13.829 [restartedMain] [WARN] t.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:34:13.874 [restartedMain] [WARN] o.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:34:17.375 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:34:18.553 [localhost-startStop-1] [ERROR] o.s.b.w.e.t.TomcatStarter - Error starting Tomcat context. Exception: org.springframework.beans.factory.BeanCreationException. Message: Error creating bean with name 'servletEndpointRegistrar' defined in class path resource [org/springframework/boot/actuate/autoconfigure/endpoint/web/ServletEndpointManagementContextConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.endpoint.web.ServletEndpointRegistrar]: Factory method 'servletEndpointRegistrar' threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'healthEndpoint' defined in class path resource [org/springframework/boot/actuate/autoconfigure/health/HealthEndpointConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.health.HealthEndpoint]: Factory method 'healthEndpoint' threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration': Bean instantiation via constructor failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration$$EnhancerBySpringCGLIB$$8e0ef1ef]: Constructor threw exception; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSource': Post-processing of FactoryBean's singleton object failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'scopedTarget.dataSource' defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Hikari.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception; nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$DataSourceBeanCreationException: Failed to determine a suitable driver class
+2019-03-28T14:34:18.639 [restartedMain] [WARN] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+2019-03-28T14:34:18.659 [restartedMain] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to auto-configure a DataSource: 'spring.datasource.url' is not specified and no embedded datasource could be auto-configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+
+2019-03-28T14:45:23.849 [restartedMain] [WARN] t.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:45:23.872 [restartedMain] [WARN] o.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:45:27.000 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:45:32.880 [restartedMain] [WARN] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'annotationAspect': Unsatisfied dependency expressed through field 'logService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'logServiceImpl': Unsatisfied dependency expressed through field 'sysLogMapper'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-03-28T14:45:32.999 [localhost-startStop-1] [WARN] o.a.c.l.WebappClassLoaderBase - The web application [ROOT] appears to have started a thread named [RxIoScheduler-1 (Evictor)] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:2078)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1093)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1067)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1127)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+ java.lang.Thread.run(Thread.java:745)
+2019-03-28T14:45:33.427 [restartedMain] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field sysLogMapper in com.imap.cloud.common.service.system.impl.LogServiceImpl required a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' in your configuration.
+
+2019-03-28T14:52:47.631 [restartedMain] [WARN] t.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:52:47.655 [restartedMain] [WARN] o.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-28T14:52:50.750 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-28T14:52:56.126 [restartedMain] [WARN] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'annotationAspect': Unsatisfied dependency expressed through field 'logService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'logServiceImpl': Unsatisfied dependency expressed through field 'sysLogMapper'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-03-28T14:52:56.146 [localhost-startStop-1] [WARN] o.a.c.l.WebappClassLoaderBase - The web application [ROOT] appears to have started a thread named [RxIoScheduler-1 (Evictor)] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:2078)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1093)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1067)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1127)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+ java.lang.Thread.run(Thread.java:745)
+2019-03-28T14:52:56.385 [restartedMain] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field sysLogMapper in com.imap.cloud.common.service.system.impl.LogServiceImpl required a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' in your configuration.
+
