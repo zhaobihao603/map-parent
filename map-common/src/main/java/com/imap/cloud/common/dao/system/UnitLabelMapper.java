@@ -1,12 +1,12 @@
 package com.imap.cloud.common.dao.system;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.imap.cloud.common.dto.UnitDTO;
 import com.imap.cloud.common.entity.system.UnitLabel;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -14,6 +14,7 @@ import com.imap.cloud.common.entity.system.UnitLabel;
  * @author Bge
  * @since 2016-11-02
  */
+@Repository
 public interface UnitLabelMapper {
 	/**
 	 * 根据id查询单位数据

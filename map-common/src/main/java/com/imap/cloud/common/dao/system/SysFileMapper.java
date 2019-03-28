@@ -1,12 +1,12 @@
 package com.imap.cloud.common.dao.system;
 
+import com.imap.cloud.common.entity.system.SysFile;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
-import com.imap.cloud.common.entity.system.SysFile;
-
+@Repository
 public interface SysFileMapper {
 	int save(SysFile file);
 	int update(SysFile file);

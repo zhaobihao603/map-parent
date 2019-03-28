@@ -4,7 +4,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.lushu.Lushu;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface LushuMapper extends BaseDao<Lushu, String> {
 	
     int deleteByPrimaryKey(String id);

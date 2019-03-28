@@ -1,10 +1,11 @@
 package com.imap.cloud.common.dao.vr;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.vr.Vr;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface VrMapper extends BaseDao<Vr, String> {
 	//删除一条记录
     int deleteByPrimaryKey(String id);

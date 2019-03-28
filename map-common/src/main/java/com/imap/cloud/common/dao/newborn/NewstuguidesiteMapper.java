@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.newborn.Newstuguidesite;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface NewstuguidesiteMapper extends BaseDao<Newstuguidesite, String>  {
     
     int deleteByroute(String id);

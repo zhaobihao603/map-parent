@@ -10,7 +10,9 @@ package com.imap.cloud.common.dao.map;
 import java.util.List;
 
 import com.imap.cloud.common.entity.map.MapRoad;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapRoadMapper {
     int deleteByPrimaryKey(String id);
 

@@ -7,12 +7,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.security.Organizational;
 import com.imap.cloud.common.entity.security.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * 机构DAO
  * @author 冯林
  *
  */
+@Repository
 public interface OrganizationalMapper extends BaseDao<Organizational, String> {
 	
 	/**

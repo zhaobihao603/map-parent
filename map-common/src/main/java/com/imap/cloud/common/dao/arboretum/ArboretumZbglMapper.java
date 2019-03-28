@@ -5,12 +5,14 @@ import java.util.Map;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.arboretum.ArboretumZbgl;
+import org.springframework.stereotype.Repository;
 
 /**
  * 植被管理DAO
  * @author 冯林
  *
  */
+@Repository
 public interface ArboretumZbglMapper extends BaseDao<ArboretumZbgl, String>{
 	
 	/**

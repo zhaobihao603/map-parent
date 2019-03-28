@@ -5,12 +5,14 @@ import java.util.Map;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.arboretum.ArboretumShu;
+import org.springframework.stereotype.Repository;
 
 /**
  * 虚拟植物园 树林 dao
  * @author 冯林
  *
  */
+@Repository
 public interface ArboretumShuMapper extends BaseDao<ArboretumShu, String>{
 	
 	/**

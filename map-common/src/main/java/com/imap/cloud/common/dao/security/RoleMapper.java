@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.security.Permission;
 import com.imap.cloud.common.entity.security.Role;
+import org.springframework.stereotype.Repository;
 
 /**
  * 
@@ -15,6 +16,7 @@ import com.imap.cloud.common.entity.security.Role;
  * @author 冯林
  *
  */
+@Repository
 public interface RoleMapper extends BaseDao<Role,String>{
 	
 	/**

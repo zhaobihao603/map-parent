@@ -6,8 +6,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import com.imap.cloud.common.entity.system.Backup;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface BackupMapper {
 	int insert(Backup backup);
 	int save(Backup backup);

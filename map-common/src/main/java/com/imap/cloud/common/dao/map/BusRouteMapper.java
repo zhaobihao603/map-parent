@@ -6,11 +6,14 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.map.BusRoute;
+import org.springframework.stereotype.Repository;
+
 /**
  * 跨校区校巴DAO层接口
  * @author 99901745
  * @since 2017-04-10
  */
+@Repository
 public interface BusRouteMapper {
 	/**
 	 * 根据起始校区id查询校巴路线

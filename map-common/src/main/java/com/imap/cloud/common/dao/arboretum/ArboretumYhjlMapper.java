@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.arboretum.ArboretumYhjl;
+import org.springframework.stereotype.Repository;
 
 /**
  * 养护记录DAO
  * @author 冯林
  *
  */
+@Repository
 public interface ArboretumYhjlMapper extends BaseDao<ArboretumYhjl, String>{
 	
 	/**

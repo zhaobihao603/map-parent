@@ -6,12 +6,14 @@ import java.util.Set;
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.security.MethodClass;
 import com.imap.cloud.common.entity.security.Permission;
+import org.springframework.stereotype.Repository;
 
 /**
  * 权限DAO接口
  * @author 冯林
  *
  */
+@Repository
 public interface PermissionMapper extends BaseDao<Permission, String>{
 	
 	/**

@@ -7,12 +7,14 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.security.Url;
+import org.springframework.stereotype.Repository;
 
 /**
  * 资源管理 URL 接口
  * @author 冯林
  *
  */
+@Repository
 public interface UrlMapper extends BaseDao<Url,String>{
 	
 	/**

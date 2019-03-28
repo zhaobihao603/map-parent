@@ -6,7 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.system.DictionaryItem;
 import com.imap.cloud.common.entity.system.DictionarySubItem;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface DictionaryMapper {
 	
 	/**

@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.newborn.Newstuguideroute;
 import com.imap.cloud.common.entity.newborn.UnitDto;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface NewstuguiderouteMapper extends BaseDao<Newstuguideroute, String>  {
 	
 	 int deleteByPrimaryKey(String id);

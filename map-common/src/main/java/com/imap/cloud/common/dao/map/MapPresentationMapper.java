@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.map.MapPresentation;
 import com.imap.cloud.common.entity.map.MapPresentationExample;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapPresentationMapper {
     long countByExample(MapPresentationExample example);
 

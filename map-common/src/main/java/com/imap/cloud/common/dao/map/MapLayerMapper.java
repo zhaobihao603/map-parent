@@ -13,8 +13,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.map.MapLayer;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface MapLayerMapper extends BaseDao<MapLayer, String> {
 
 	List<MapLayer> listByDirId(@Param("dirId")String dirId);

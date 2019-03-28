@@ -4,7 +4,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.scenic.Scenic;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ScenicMapper extends BaseDao<Scenic, String>{
 	
     int deleteByPrimaryKey(String id);

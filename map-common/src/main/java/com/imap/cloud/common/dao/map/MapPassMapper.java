@@ -12,7 +12,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.map.MapPass;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapPassMapper {
     int deleteBy(@Param("start")String start,@Param("end")String end);
     

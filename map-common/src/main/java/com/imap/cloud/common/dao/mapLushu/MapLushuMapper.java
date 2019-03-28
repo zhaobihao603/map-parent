@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.mapLushu.MapLushu;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapLushuMapper extends BaseDao<MapLushu, String> {
 	
 	List<MapLushu> getBy(MapLushu entity);

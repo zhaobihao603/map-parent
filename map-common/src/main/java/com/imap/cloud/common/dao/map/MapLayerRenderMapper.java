@@ -13,8 +13,9 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.map.MapLayerRender;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface MapLayerRenderMapper{
 	/**
 	 * @param layerId

@@ -4,12 +4,14 @@ import java.util.Map;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.school.TrafficGuideRoute;
+import org.springframework.stereotype.Repository;
 
 /**
  * 交通查询Dao
  * @author 冯林
  *
  */
+@Repository
 public interface TrafficGuideRouteMapper extends BaseDao<TrafficGuideRoute, String>{
 	
 	/**

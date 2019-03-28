@@ -1,7 +1,9 @@
 package com.imap.cloud.common.dao.system;
 
 import com.imap.cloud.common.entity.system.SysLogArgs;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SysLogArgsMapper {
     int deleteByPrimaryKey(String id);
 

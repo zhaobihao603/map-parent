@@ -12,7 +12,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.imap.cloud.common.entity.map.MapNode;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapNodeMapper {
     int deleteByPrimaryKey(String id);
 

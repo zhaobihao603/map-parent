@@ -8,7 +8,9 @@ import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.map.MapLayer;
 import com.imap.cloud.common.entity.map.MapLayerItem;
 import com.imap.cloud.common.entity.system.DictionaryItem;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapLayerItemMapper extends BaseDao<MapLayerItem, String>{
 	List<MapLayerItem> listByLayerId(@Param("layerId")String layerId);
 

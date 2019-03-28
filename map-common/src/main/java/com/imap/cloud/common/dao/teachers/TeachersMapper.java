@@ -1,13 +1,13 @@
 package com.imap.cloud.common.dao.teachers;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.teachers.Teachers;
-import com.imap.cloud.common.entity.vr.Vr;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface TeachersMapper extends BaseDao<Teachers, String>  {
 	//删除一条记录
     int deleteByPrimaryKey(String id);

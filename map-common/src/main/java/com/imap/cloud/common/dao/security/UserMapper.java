@@ -9,6 +9,7 @@ import com.imap.cloud.common.entity.security.Organizational;
 import com.imap.cloud.common.entity.security.Permission;
 import com.imap.cloud.common.entity.security.Role;
 import com.imap.cloud.common.entity.security.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * 
@@ -16,6 +17,7 @@ import com.imap.cloud.common.entity.security.User;
  * @author 冯林
  *
  */
+@Repository
 public interface UserMapper extends BaseDao<User,String> {
 	
 	/**

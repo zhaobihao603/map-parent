@@ -3,7 +3,9 @@ package com.imap.cloud.common.dao.map;
 import java.util.List;
 
 import com.imap.cloud.common.entity.map.MapSchoolBorder;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MapSchoolBorderMapper {
     int deleteByPrimaryKey(String id);
 

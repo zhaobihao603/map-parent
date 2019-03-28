@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.imap.cloud.common.dao.base.BaseDao;
 import com.imap.cloud.common.entity.arboretum.ArboretumTree;
+import org.springframework.stereotype.Repository;
 
 /**
  * 虚拟植物园  林学分类 dao
  * @author 冯林
  *
  */
+@Repository
 public interface ArboretumTreeMapper extends BaseDao<ArboretumTree, String> {
 	
 	/**
