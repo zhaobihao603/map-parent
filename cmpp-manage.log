@@ -565,3 +565,83 @@ Action:
 
 Consider defining a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' in your configuration.
 
+2019-03-29T13:49:46.290 [restartedMain] [INFO] o.s.c.a.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@436533c9: startup date [Fri Mar 29 13:49:46 CST 2019]; root of context hierarchy
+2019-03-29T13:49:46.506 [restartedMain] [INFO] o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'consulDiscoveryProperties' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.consul.discovery.ConsulDiscoveryClientConfiguration; factoryMethodName=consulDiscoveryProperties; initMethodName=null; destroyMethodName=(inferred); defined in org.springframework.cloud.consul.discovery.ConsulDiscoveryClientConfiguration] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=consulDiscoveryClientConfigServiceBootstrapConfiguration; factoryMethodName=consulDiscoveryProperties; initMethodName=null; destroyMethodName=(inferred); defined in org.springframework.cloud.consul.discovery.configclient.ConsulDiscoveryClientConfigServiceBootstrapConfiguration]
+2019-03-29T13:49:46.629 [restartedMain] [INFO] o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2019-03-29T13:49:46.745 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.retry.annotation.RetryConfiguration' of type [org.springframework.retry.annotation.RetryConfiguration$$EnhancerBySpringCGLIB$$9baca1f1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:46.757 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'configurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$c2030cc9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:47.796 [restartedMain] [INFO] o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService  'catalogWatchTaskScheduler'
+2019-03-29T13:49:47.841 [restartedMain] [INFO] o.s.c.s.DefaultLifecycleProcessor - Starting beans in phase 0
+2019-03-29T13:49:48.404 [restartedMain] [INFO] o.s.c.c.c.ConfigServicePropertySourceLocator - Fetching config from server at : http://127.0.0.1:5502/
+2019-03-29T13:49:50.504 [http-nio-5502-exec-3] [INFO] o.s.c.a.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@36f0587: startup date [Fri Mar 29 13:49:50 CST 2019]; root of context hierarchy
+2019-03-29T13:49:50.507 [http-nio-5502-exec-3] [INFO] o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2019-03-29T13:49:50.511 [http-nio-5502-exec-3] [INFO] o.s.c.a.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@36f0587: startup date [Fri Mar 29 13:49:50 CST 2019]; root of context hierarchy
+2019-03-29T13:49:50.542 [restartedMain] [INFO] o.s.c.c.c.ConfigServicePropertySourceLocator - Located environment: name=map-manage, profiles=[develop], label=null, version=71c069950855262c70fe8cdfec0ef43af0130e2e, state=null
+2019-03-29T13:49:50.543 [restartedMain] [INFO] o.s.c.b.c.PropertySourceBootstrapConfiguration - Located property source: CompositePropertySource {name='configService', propertySources=[MapPropertySource {name='configClient'}]}
+2019-03-29T13:49:50.548 [restartedMain] [INFO] c.i.c.m.MapManageApplication - No active profile set, falling back to default profiles: default
+2019-03-29T13:49:50.566 [restartedMain] [INFO] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@5fd1267c: startup date [Fri Mar 29 13:49:50 CST 2019]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@436533c9
+2019-03-29T13:49:51.932 [restartedMain] [WARN] t.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-29T13:49:51.957 [restartedMain] [WARN] o.m.s.m.ClassPathMapperScanner - No MyBatis mapper was found in '[com.imap.cloud.manage]' package. Please check your configuration.
+2019-03-29T13:49:52.241 [restartedMain] [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
+2019-03-29T13:49:52.288 [restartedMain] [INFO] o.s.i.c.IntegrationRegistrar - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-03-29T13:49:52.394 [restartedMain] [INFO] o.s.c.a.ConfigurationClassBeanDefinitionReader - Skipping bean definition for [BeanMethod:name=configurableCompositeMessageConverter,declaringClass=org.springframework.cloud.stream.config.ContentTypeConfiguration]: a definition for bean 'integrationArgumentResolverMessageConverter' already exists. This top-level bean definition is considered as an override.
+2019-03-29T13:49:52.874 [restartedMain] [INFO] o.s.c.c.s.GenericScope - BeanFactory id=80fb5035-af10-3dea-abb4-711afc756124
+2019-03-29T13:49:52.895 [restartedMain] [INFO] o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-03-29T13:49:52.897 [restartedMain] [INFO] o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-03-29T13:49:52.910 [restartedMain] [INFO] o.s.b.f.a.AutowiredAnnotationBeanPostProcessor - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2019-03-29T13:49:52.942 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration' of type [org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration$$EnhancerBySpringCGLIB$$6c54c7fa] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:53.018 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.retry.annotation.RetryConfiguration' of type [org.springframework.retry.annotation.RetryConfiguration$$EnhancerBySpringCGLIB$$9baca1f1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:53.101 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$a5e909cc] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:53.334 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$10dac4fb] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:53.394 [restartedMain] [INFO] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$c2030cc9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-03-29T13:49:54.091 [restartedMain] [INFO] o.s.b.w.e.t.TomcatWebServer - Tomcat initialized with port(s): 9000 (http)
+2019-03-29T13:49:54.105 [restartedMain] [INFO] o.a.c.h.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9000"]
+2019-03-29T13:49:54.118 [restartedMain] [INFO] o.a.c.c.StandardService - Starting service [Tomcat]
+2019-03-29T13:49:54.118 [restartedMain] [INFO] o.a.c.c.StandardEngine - Starting Servlet Engine: Apache Tomcat/8.5.29
+2019-03-29T13:49:54.123 [localhost-startStop-1] [INFO] o.a.c.c.AprLifecycleListener - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\WorkFiles\JDK1.8.0_40\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WorkFiles\JDK1.8.0_40\bin;F:\maven\apache-maven-3.3.9\bin;C:\WorkFiles\Redis-x64-3.2.100;C:\WorkFiles\gradle-4.7\bin;F:\apache-ant-1.9.11\bin;F:\bigdata\zookeeper-3.5.3-beta\bin;F:\bigdata\kafka_2.12-1.1.0\bin\windows;F:\nodejs\;C:\WorkFiles\Git\cmd;C:\WorkFiles\mongodb-3.4.14\bin;E:\Program Files (x86)\ZeroC\Ice-3.6.1\bin;C:\WorkFiles\cygwin\bin;C:\WINDOWS\System32\OpenSSH\;C:\WorkFiles\erl9.2\bin;C:\WorkFiles\consul1.3.0;E:\Program Files\TortoiseSVN\bin;F:/nodejs/node_global;C:\Users\lenovo\AppData\Local\Microsoft\WindowsApps;;C:\WorkFiles\IntelliJ IDEA 2018.3.3\bin;;.]
+2019-03-29T13:49:54.280 [localhost-startStop-1] [INFO] o.a.c.c.C.[.[.[/] - Initializing Spring embedded WebApplicationContext
+2019-03-29T13:49:54.280 [localhost-startStop-1] [INFO] o.s.w.c.ContextLoader - Root WebApplicationContext: initialization completed in 3714 ms
+2019-03-29T13:49:54.891 [localhost-startStop-1] [WARN] c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+2019-03-29T13:49:54.891 [localhost-startStop-1] [INFO] c.n.c.s.URLConfigurationSource - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-03-29T13:49:54.902 [localhost-startStop-1] [INFO] c.n.c.DynamicPropertyFactory - DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@17d93f9d
+2019-03-29T13:49:58.301 [localhost-startStop-1] [INFO] o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService  'taskScheduler'
+2019-03-29T13:49:59.205 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'characterEncodingFilter' to: [/*]
+2019-03-29T13:49:59.205 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2019-03-29T13:49:59.205 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2019-03-29T13:49:59.205 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'requestContextFilter' to: [/*]
+2019-03-29T13:49:59.206 [localhost-startStop-1] [INFO] o.s.b.w.s.DelegatingFilterProxyRegistrationBean - Mapping filter: 'springSecurityFilterChain' to: [/*]
+2019-03-29T13:49:59.206 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'httpTraceFilter' to: [/*]
+2019-03-29T13:49:59.206 [localhost-startStop-1] [INFO] o.s.b.w.s.FilterRegistrationBean - Mapping filter: 'webMvcMetricsFilter' to: [/*]
+2019-03-29T13:49:59.206 [localhost-startStop-1] [INFO] o.s.b.w.s.ServletRegistrationBean - Servlet dispatcherServlet mapped to [/]
+2019-03-29T13:49:59.208 [localhost-startStop-1] [INFO] o.s.b.a.e.w.ServletEndpointRegistrar - Registered '/actuator/hystrix.stream' to hystrix.stream-actuator-endpoint
+2019-03-29T13:49:59.304 [restartedMain] [WARN] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'annotationAspect': Unsatisfied dependency expressed through field 'logService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'logServiceImpl': Unsatisfied dependency expressed through field 'sysLogMapper'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2019-03-29T13:49:59.305 [restartedMain] [INFO] o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler'
+2019-03-29T13:49:59.308 [restartedMain] [INFO] o.a.c.c.StandardService - Stopping service [Tomcat]
+2019-03-29T13:49:59.322 [localhost-startStop-1] [WARN] o.a.c.l.WebappClassLoaderBase - The web application [ROOT] appears to have started a thread named [RxIoScheduler-1 (Evictor)] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:2078)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1093)
+ java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:809)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1067)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1127)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+ java.lang.Thread.run(Thread.java:745)
+2019-03-29T13:49:59.337 [restartedMain] [INFO] o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2019-03-29T13:49:59.564 [restartedMain] [ERROR] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field sysLogMapper in com.imap.cloud.common.service.system.impl.LogServiceImpl required a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.imap.cloud.common.dao.system.SysLogMapper' in your configuration.
+
