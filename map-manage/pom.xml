@@ -145,11 +145,7 @@
                     <include>*.xml</include>
                     <include>*.properties</include>
                     <include>*.wsdl</include>
-                    <include>reports/*</include>
-                    <include>managerReports/*</include>
                     <include>mappers/*</include>
-                    <include>cmpp-manage/tpl/**</include>
-                    <include>excel-templates/**</include>
                     <include>templates/**</include>
                 </includes>
             </resource>
@@ -159,7 +155,7 @@
                 <filtering>false</filtering>
                 <targetPath>config</targetPath>
                 <includes>
-                    <include>cmpp-manage/tpl/static/lib/js/Hui-iconfont/1.0.8/**</include>
+                    <include>templates/static/lib/js/Hui-iconfont/1.0.8/**</include>
                     <include>*.xml</include>
                 </includes>
             </resource>
